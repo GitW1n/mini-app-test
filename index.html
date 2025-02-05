@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="telegram-web-app" content="true">
+    <title>Mini App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #4f5a65;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .header {
+            background-image: linear-gradient(to right, rgb(23, 62, 109), rgb(56, 134, 197));
+            height: 55px;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #f3efef;
+            margin-bottom: 0px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        #username {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 34px;
+            color: #2c3e50;
+        }
+
+        button {
+            background-color: #0092f4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Стиль для кнопок с иконками */
+        .icon-buttons {
+            display: flex;
+            justify-content: space-evenly;
+            padding: 10px;
+            background-color: #4f5a65;
+        }
+
+        .icon-buttons img {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon-buttons img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            button {
+                padding: 12px 25px;
+                font-size: 0.9rem;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .icon-buttons img {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="App">
+        <header class="header">
+            <h1>Telesim.tg</h1>
+            <div>
+                <button>Home</button>
+                <button>Pricing</button>
+                <button>Buy</button>
+            </div>
+        </header>
+
+        <div style="text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+            <span id="username"></span>
+            <h1>Привет, гость!</h1>
+            <button onclick="Telegram.WebApp.showAlert('Вы получили доступ!')">Получить доступ</button>
+        </div>
+
+        <!-- Повторяющиеся кнопки с иконками внизу -->
+        <div class="icon-buttons">
+            <!-- Локальная иконка для домашней страницы -->
+            <a href="index.html">
+                <img src="C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\images\home.png" alt="Home" width="40" height="40">
+            </a>
+        
+            <!-- Локальная иконка для страницы цен -->
+            <a href="pricing.html">
+                <img src="images/pricing-icon.png" alt="Pricing" width="40" height="40">
+            </a>
+        
+            <!-- Локальная иконка для страницы покупки -->
+            <a href="buy.html">
+                <img src="images/buy-icon.png" alt="Buy" width="40" height="40">
+            </a>
+        </div>
+        
+    </div>
+
+    <script>
+        // Подключение API Telegram для mini app
+        window.addEventListener('load', function () {
+            Telegram.WebApp.init();
+            if (Telegram.WebApp.initDataUnsafe.user) {
+                document.getElementById('username').innerText = `Привет, ${Telegram.WebApp.initDataUnsafe.user.first_name}`;
+            }
+        });
+    </script>
+</body>
+</html>
+
