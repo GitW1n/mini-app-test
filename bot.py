@@ -1,11 +1,18 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+TOKEN = os.getenv("BOT_TOKEN")
+
+application = Application.builder().token(TOKEN).build()
 
 # Функция для отправки стартового сообщения с кнопками
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Создаем кнопки
     keyboard = [
-        [InlineKeyboardButton("", callback_data='number_1')]
+        [InlineKeyboardButton("Перейти в MiniApp", url='https://example.com/miniapp')]  # Указание ссылки на MiniApp
     ]
 
     # Используем raw string для пути к изображению
@@ -42,10 +49,6 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_message = update.message.text
     if user_message == '/buy_1':
         response = "Вы успешно приобрели Виртуальный номер 1. Подробности на почте."
-    elif user_message == '/buy_2':
-        response = "Вы успешно приобрели Виртуальный номер 2. Подробности на почте."
-    elif user_message == '/buy_3':
-        response = "Вы успешно приобрели Виртуальный номер 3. Подробности на почте."
     else:
         response = "Для покупки выберите номер через кнопки."
 
@@ -54,7 +57,7 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 # Основная функция для запуска бота
 def main() -> None:
     # Замените 'YOUR_TOKEN' на ваш реальный токен
-    application = Application.builder().token("8061384302:AAEhyzzZaWIinykq20Bw1CT0CbxIzR_nBgg").build()
+    application = Application.builder().token(TOKEN).build()
 
     # Регистрируем обработчики команд
     application.add_handler(CommandHandler("start", start))
