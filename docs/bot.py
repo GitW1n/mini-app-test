@@ -16,7 +16,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ]
 
     # Используем raw string для пути к изображению
-    image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\photos\logo.jpg'
+    image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\docs\photos\logo.jpg'
 
     # Создаем разметку клавиатуры
     reply_markup = InlineKeyboardMarkup(keyboard)
