@@ -15,18 +15,17 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background-color: rgb(47, 52, 56); /* Темно-серый */
-            color: white; /* Белый текст */
+            background-color: rgb(47, 52, 56);
+            color: white;
             display: flex;
             flex-direction: column;
-            height: 100%;
-            justify-content: space-between;
+            height: 100vh;
+            overflow: hidden;
         }
 
         .header {
-            background-image: linear-gradient(to right, #1F2A44, #3498DB); /* Темно-синий и голубой */
+            background-image: linear-gradient(to right, #1F2A44, #3498DB);
             height: 55px;
-            font-style: italic;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -36,80 +35,95 @@
         h1 {
             font-size: 2rem;
             color: white;
-            margin-bottom: 0px;
-            text-align: center;
             font-weight: 500;
         }
 
-        #username {
+        #content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 2000px; /* Увеличение высоты для прокрутки */
+        }
+
+        .user-info {
             display: flex;
             align-items: center;
             background-color: #1F2A44;
-            height: 60px;
-            width: 90%;
+            padding: 10px;
             border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            line-height: 34px;
-            color: white; /* Белый текст */
-            padding-left: 10px;
+            margin-bottom: 15px;
         }
 
-        #username img {
-            width: 40px;
-            height: 40px;
+        .user-info img {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             margin-right: 15px;
         }
 
-        button {
-            background-color: #424f58; /* Синий */
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            margin-bottom: 10px;
+        .user-info span {
+            font-size: 1.2rem;
+            font-weight: bold;
         }
 
-        button:hover {
-            background-color: #1C6F8C; /* Темно-синий */
-            transform: scale(1.05);
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
         }
 
-        button:focus {
-            outline: none;
+        .product-item {
+            display: flex;
+            align-items: center;
+            background-color: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
         }
 
-        /* Стиль для кнопок с иконками */
+        .product-item:hover {
+            transform: scale(1.02);
+        }
+
+        .product-item img {
+            width: 40px;
+            height: 30px;
+            margin-right: 15px;
+        }
+
+        .product-item span {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
         .icon-buttons {
             display: flex;
             justify-content: space-evenly;
             padding: 10px;
-            background-color: rgb(52, 63, 74); /* Темно-серый оттенок для нижней панели */
+            background-color: rgb(52, 63, 74);
             position: fixed;
             bottom: 0;
             width: 100%;
-            left: 0;
         }
 
-        .icon-buttons a {
-            display: block;
+        .icon-buttons button {
+            background-color: #211f1f;
+            border: none;
             padding: 10px;
-            background-color: #211f1f; /* Синий */
-            border-radius: 8px; /* Меньше округление */
-            width: 45%;
+            border-radius: 8px;
+            width: 30%;
             height: 50px;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             transition: transform 0.3s ease, background-color 0.3s ease;
         }
 
-        .icon-buttons a:hover {
-            background-color: #3c4042; /* Темно-синий при наведении */
+        .icon-buttons button:hover {
+            background-color: #3c4042;
             transform: scale(1.1);
         }
 
@@ -117,77 +131,100 @@
             width: 30px;
             height: 30px;
         }
-
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            button {
-                padding: 12px 25px;
-                font-size: 0.9rem;
-            }
-
-            .header h1 {
-                font-size: 1.2rem;
-            }
-
-            .icon-buttons img {
-                width: 30px;
-                height: 30px;
-            }
-        }
     </style>
 </head>
 <body>
+    <header class="header">
+        <h1>Telesim.tg</h1>
+    </header>
 
-    <div class="App">
-        <header class="header">
-            <h1>Telesim.tg</h1>
-            <div>
-                <button>Home</button>
-                <button>Pricing</button>
-                <button>Buy</button>
-            </div>
-        </header>
-
-        <div style="text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
-            <div id="username">
-                <!-- Фотография пользователя из Telegram API -->
-                <img id="profile-picture" src="" alt="Profile Picture">
-                <span id="username-text"></span>
-            </div>
-            
-            <button onclick="Telegram.WebApp.showAlert('Вы получили доступ!')">Получить доступ</button>
+    <div id="content">
+        <div class="user-info">
+            <img id="profile-picture" src="https://via.placeholder.com/50" alt="Profile Picture">
+            <span id="username">Username</span>
         </div>
 
-        <div class="icon-buttons">
-            <!-- Иконка Home -->
-            <a href="https://yourwebsite.com/home">
-                <img src="https://img.icons8.com/?size=100&id=s7mPVCB5sKGa&format=png&color=ffffff" alt="Home" width="40" height="40">
-            </a>
-        
-            <!-- Иконка Order -->
-            <a href="https://yourwebsite.com/pricing">
-                <img src="https://img.icons8.com/?size=100&id=KHziBvf1V4jY&format=png&color=ffffff" alt="Pricing" width="40" height="40">
-            </a>
-        
-            <!-- Иконка Buy -->
-            <a href="https://yourwebsite.com/buy">
-                <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="Buy" width="40" height="40">
-            </a>
+        <h2>Главная страница</h2>
+        <p>Добро пожаловать на главную страницу!</p>
+        <h3>Товары - Номера телефонов</h3>
+        <div class="product-list" id="product-list">
+            <!-- Товары будут добавлены здесь с помощью JavaScript -->
         </div>
     </div>
 
+    <div class="icon-buttons">
+        <button onclick="changeContent('home')">
+            <img src="https://img.icons8.com/?size=100&id=s7mPVCB5sKGa&format=png&color=ffffff" alt="Home">
+        </button>
+
+        <button onclick="changeContent('pricing')">
+            <img src="https://img.icons8.com/?size=100&id=KHziBvf1V4jY&format=png&color=ffffff" alt="Pricing">
+        </button>
+
+        <button onclick="changeContent('buy')">
+            <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="Buy">
+        </button>
+    </div>
+
     <script>
-        // Подключение API Telegram для mini app
-        window.addEventListener('load', function () {
-            Telegram.WebApp.init();
-            if (Telegram.WebApp.initDataUnsafe.user) {
-                document.getElementById('username-text').innerText = `Привет, ${Telegram.WebApp.initDataUnsafe.user.first_name}`;
-                document.getElementById('profile-picture').src = Telegram.WebApp.initDataUnsafe.user.photo_url;  // Фото профиля пользователя
+        const products = [
+            { flag: 'flag1.png', number: '+123 456 789' },
+            { flag: 'flag2.png', number: '+987 654 321' },
+            { flag: 'flag3.png', number: '+555 123 456' }
+        ];
+
+        function renderProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+
+            for (let i = 0; i < 50; i++) { // Добавление большего количества товаров для прокрутки
+                products.forEach(product => {
+                    const item = document.createElement('div');
+                    item.className = 'product-item';
+                    item.innerHTML = `
+                        <img src="${product.flag}" alt="Flag">
+                        <span>${product.number}</span>
+                    `;
+                    productList.appendChild(item);
+                });
             }
+        }
+
+        function changeContent(page) {
+            const content = document.getElementById('content');
+            const userInfo = document.querySelector('.user-info').outerHTML;
+
+            switch (page) {
+                case 'home':
+                    content.innerHTML = `
+                        ${userInfo}
+                        <h2>Главная страница</h2>
+                        <p>Добро пожаловать на главную страницу!</p>
+                        <h3>Товары - Номера телефонов</h3>
+                        <div class="product-list" id="product-list"></div>
+                    `;
+                    renderProducts();
+                    break;
+                case 'pricing':
+                    content.innerHTML = `${userInfo}<h2>Тарифы</h2><p>Здесь вы можете ознакомиться с нашими тарифами.</p>`;
+                    break;
+                case 'buy':
+                    content.innerHTML = `${userInfo}<h2>Покупка</h2><p>Выберите товар и оформите заказ прямо сейчас!</p>`;
+                    break;
+                default:
+                    content.innerHTML = `
+                        ${userInfo}
+                        <h2>Главная страница</h2>
+                        <p>Добро пожаловать на главную страницу!</p>
+                        <h3>Товары - Номера телефонов</h3>
+                        <div class="product-list" id="product-list"></div>
+                    `;
+                    renderProducts();
+            }
+        }
+
+        window.addEventListener('load', function () {
+            changeContent('home');
         });
     </script>
 </body>
