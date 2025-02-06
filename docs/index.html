@@ -1,231 +1,316 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="telegram-web-app" content="true">
-    <title>Mini App</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: rgb(47, 52, 56);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .header {
-            background-image: linear-gradient(to right, #1F2A44, #3498DB);
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 10px;
-        }
-
-        h1 {
-            font-size: 2rem;
-            color: white;
-            font-weight: 500;
-        }
-
-        #content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            overflow-y: auto;
-            max-height: 2000px; /* Увеличение высоты для прокрутки */
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            background-color: #1F2A44;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .user-info img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
-
-        .user-info span {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .product-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .product-item {
-            display: flex;
-            align-items: center;
-            background-color: #2c3e50;
-            padding: 15px;
-            border-radius: 8px;
-            transition: transform 0.2s ease;
-        }
-
-        .product-item:hover {
-            transform: scale(1.02);
-        }
-
-        .product-item img {
-            width: 40px;
-            height: 30px;
-            margin-right: 15px;
-        }
-
-        .product-item span {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .icon-buttons {
-            display: flex;
-            justify-content: space-evenly;
-            padding: 10px;
-            background-color: rgb(52, 63, 74);
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        .icon-buttons button {
-            background-color: #211f1f;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            width: 30%;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-
-        .icon-buttons button:hover {
-            background-color: #3c4042;
-            transform: scale(1.1);
-        }
-
-        .icon-buttons img {
-            width: 30px;
-            height: 30px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="telegram-web-app" content="true" />
+  <title>Mini App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: rgb(47, 52, 56);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    
+    .header {
+      background-image: linear-gradient(to right, #1F2A44, #3498DB);
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+    
+    h1 {
+      font-size: 2rem;
+      color: white;
+      font-weight: 500;
+    }
+    
+    #content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      overflow-y: auto;
+      height: 100%;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      background-color: #1F2A44;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .user-info img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+    
+    .user-info span {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .product-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .product-item {
+      display: flex;
+      align-items: center;
+      background-color: #2c3e50;
+      padding: 15px;
+      border-radius: 8px;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .product-item:hover {
+      transform: scale(1.02);
+    }
+    
+    .product-item span {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .icon-buttons {
+      display: flex;
+      justify-content: space-evenly;
+      padding: 10px;
+      background-color: rgb(52, 63, 74);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+    
+    .icon-buttons button {
+      background-color: #211f1f;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      width: 30%;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .icon-buttons button:hover {
+      background-color: #3c4042;
+      transform: scale(1.1);
+    }
+    
+    .icon-buttons img {
+      width: 30px;
+      height: 30px;
+    }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <h1>Telesim.tg</h1>
-    </header>
-
-    <div id="content">
-        <div class="user-info">
-            <img id="profile-picture" src="https://via.placeholder.com/50" alt="Profile Picture">
-            <span id="username">Username</span>
-        </div>
-
-        <h2>Главная страница</h2>
-        <p>Добро пожаловать на главную страницу!</p>
-        <h3>Товары - Номера телефонов</h3>
-        <div class="product-list" id="product-list">
-            <!-- Товары будут добавлены здесь с помощью JavaScript -->
-        </div>
+  <header class="header">
+    <h1>Telesim.tg</h1>
+  </header>
+  
+  <div id="content">
+    <div class="user-info">
+      <img id="profile-picture" src="images/profile.png" alt="Profile Picture" />
+      <span id="username">Username</span>
     </div>
-
-    <div class="icon-buttons">
-        <button onclick="changeContent('home')">
-            <img src="https://img.icons8.com/?size=100&id=s7mPVCB5sKGa&format=png&color=ffffff" alt="Home">
-        </button>
-
-        <button onclick="changeContent('pricing')">
-            <img src="https://img.icons8.com/?size=100&id=KHziBvf1V4jY&format=png&color=ffffff" alt="Pricing">
-        </button>
-
-        <button onclick="changeContent('buy')">
-            <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="Buy">
-        </button>
-    </div>
-
-    <script>
-        const products = [
-            { flag: 'flag1.png', number: '+123 456 789' },
-            { flag: 'flag2.png', number: '+987 654 321' },
-            { flag: 'flag3.png', number: '+555 123 456' }
-        ];
-
-        function renderProducts() {
-            const productList = document.getElementById('product-list');
-            productList.innerHTML = '';
-
-            for (let i = 0; i < 50; i++) { // Добавление большего количества товаров для прокрутки
-                products.forEach(product => {
-                    const item = document.createElement('div');
-                    item.className = 'product-item';
-                    item.innerHTML = `
-                        <img src="${product.flag}" alt="Flag">
-                        <span>${product.number}</span>
-                    `;
-                    productList.appendChild(item);
-                });
-            }
+    
+    <!-- Контент будет динамически подставляться сюда -->
+  </div>
+  
+  <div class="icon-buttons">
+    <button onclick="changeContent('home')">
+      <img src="https://img.icons8.com/?size=100&id=s7mPVCB5sKGa&format=png&color=ffffff" alt="Home" />
+    </button>
+    
+    <button onclick="changeContent('cart')">
+      <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="Cart" />
+    </button>
+    
+    <button onclick="changeContent('orders')">
+      <img src="https://img.icons8.com/ios/452/order-delivered.png" alt="Orders" />
+    </button>
+  </div>
+  
+  <script>
+    // Массив с разделами главной страницы
+    const mainSections = [
+      { title: 'Виртуальные номера', target: 'virtual-numbers' },
+      { title: 'Аккаунты', target: 'accounts' },
+      { title: '🔒Временно недоступно🔒', target: null },
+      { title: '🔒Временно недоступно🔒', target: null },
+      { title: '🔒Временно недоступно🔒', target: null }
+    ];
+    
+    // Товары для раздела "Виртуальные номера" (номера телефонов)
+    const virtualNumbers = [
+      { title: '+123 456 789' },
+      { title: '+987 654 321' },
+      { title: '+555 123 456' }
+    ];
+    
+    // Товары для раздела "Аккаунты"
+    const accounts = [
+      { title: 'Аккаунт1' },
+      { title: 'Аккаунт2' },
+      { title: 'Аккаунт3' }
+    ];
+    
+    // Корзина (товары, добавленные пользователем)
+    let cart = [];
+    
+    // Функция для рендеринга списка товаров или разделов
+    // section: 'home' для главной, 'virtual-numbers' или 'accounts' для категорий
+    function renderProducts(products, section) {
+      const productList = document.getElementById('product-list');
+      productList.innerHTML = ''; // Очищаем список
+      
+      products.forEach(product => {
+        const item = document.createElement('div');
+        item.className = 'product-item';
+        item.innerHTML = `<span>${product.title}</span>`;
+        
+        if (section === 'home') {
+          // Для главной страницы – навигация по разделам
+          if (product.target) {
+            item.addEventListener('click', () => {
+              changeContent(product.target);
+            });
+          } else {
+            item.addEventListener('click', () => {
+              alert('Секция недоступна');
+            });
+          }
+        } else {
+          // Для категорий товаров – при клике товар добавляется в корзину
+          item.addEventListener('click', function () {
+            cart.push(product);
+            alert(`${product.title} добавлен в корзину!`);
+          });
         }
-
-        function changeContent(page) {
-            const content = document.getElementById('content');
-            const userInfo = document.querySelector('.user-info').outerHTML;
-
-            switch (page) {
-                case 'home':
-                    content.innerHTML = `
-                        ${userInfo}
-                        <h2>Главная страница</h2>
-                        <p>Добро пожаловать на главную страницу!</p>
-                        <h3>Товары - Номера телефонов</h3>
-                        <div class="product-list" id="product-list"></div>
-                    `;
-                    renderProducts();
-                    break;
-                case 'pricing':
-                    content.innerHTML = `${userInfo}<h2>Тарифы</h2><p>Здесь вы можете ознакомиться с нашими тарифами.</p>`;
-                    break;
-                case 'buy':
-                    content.innerHTML = `${userInfo}<h2>Покупка</h2><p>Выберите товар и оформите заказ прямо сейчас!</p>`;
-                    break;
-                default:
-                    content.innerHTML = `
-                        ${userInfo}
-                        <h2>Главная страница</h2>
-                        <p>Добро пожаловать на главную страницу!</p>
-                        <h3>Товары - Номера телефонов</h3>
-                        <div class="product-list" id="product-list"></div>
-                    `;
-                    renderProducts();
-            }
-        }
-
-        window.addEventListener('load', function () {
-            changeContent('home');
-        });
-    </script>
+        
+        productList.appendChild(item);
+      });
+    }
+    
+    // Функция для добавления кнопки "Вернуться на главную" (на страницах категорий)
+    function addBackButton() {
+      const productList = document.getElementById('product-list');
+      const backButton = document.createElement('button');
+      backButton.textContent = 'Вернуться на главную';
+      backButton.addEventListener('click', function () {
+        changeContent('home');
+      });
+      productList.appendChild(backButton);
+    }
+    
+    // Функция для отображения корзины
+    function renderCart() {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info').outerHTML;
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Корзина</h2>
+        <ul>
+          ${cart.map(product => `<li>${product.title}</li>`).join('')}
+        </ul>
+      `;
+    }
+    
+    // Функция для отображения заказов в ожидании
+    function renderOrders() {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info').outerHTML;
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Заказы в ожидании</h2>
+        <p>Здесь будут отображаться заказы, ожидающие обработки.</p>
+      `;
+    }
+    
+    // Функция смены содержимого страницы
+    function changeContent(page) {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info').outerHTML;
+      
+      switch (page) {
+        case 'home':
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Главная страница</h2>
+            <p>Добро пожаловать на главную страницу!</p>
+            <h3>Выберите раздел товаров</h3>
+            <div class="product-list" id="product-list"></div>
+          `;
+          renderProducts(mainSections, 'home');
+          break;
+          
+        case 'virtual-numbers':
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Виртуальные номера</h2>
+            <div class="product-list" id="product-list"></div>
+          `;
+          renderProducts(virtualNumbers, 'virtual-numbers');
+          addBackButton();
+          break;
+          
+        case 'accounts':
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Аккаунты</h2>
+            <div class="product-list" id="product-list"></div>
+          `;
+          renderProducts(accounts, 'accounts');
+          addBackButton();
+          break;
+          
+        case 'cart':
+          renderCart();
+          break;
+          
+        case 'orders':
+          renderOrders();
+          break;
+          
+        default:
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Главная страница</h2>
+            <p>Добро пожаловать на главную страницу!</p>
+            <h3>Выберите раздел товаров</h3>
+            <div class="product-list" id="product-list"></div>
+          `;
+          renderProducts(mainSections, 'home');
+      }
+    }
+    
+    window.addEventListener('load', function () {
+      changeContent('home');
+    });
+  </script>
 </body>
 </html>
