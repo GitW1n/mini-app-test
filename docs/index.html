@@ -169,19 +169,30 @@ button:hover {
   </div>
 
   <div class="icon-buttons">
-    <button onclick="changeContent('home')">
+    <!-- Кнопка перехода на главную страницу -->
+    <button onclick="goHome()">
       <img src="https://img.icons8.com/?size=100&id=s7mPVCB5sKGa&format=png&color=ffffff" alt="Home" />
     </button>
-
+  
+    <!-- Кнопка перехода в корзину -->
     <button onclick="changeContent('cart')">
       <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="Cart" />
     </button>
-
+  
+    <!-- Кнопка перехода к заказам -->
     <button onclick="changeContent('orders')">
       <img src="https://img.icons8.com/ios/452/order-delivered.png" alt="Orders" />
     </button>
   </div>
-
+  <div id="qr-content"></div>
+  
+  <style>
+    #qr-content{
+      display: none;  /* Скрываем эти div по умолчанию */
+    }
+  </style>
+  
+  
   <script>
     function showCurrentTime() {
       const now = new Date();
@@ -223,259 +234,301 @@ button:hover {
     }
   </style>
 
-  <script>
-    const mainSections = [
-      { title: 'Виртуальные номера', target: 'virtual-numbers' },
-      { title: 'Аккаунты', target: 'accounts' },
-      { title: '🔒Временно недоступно🔒', target: null },
-      { title: '🔒Временно недоступно🔒', target: null },
-      { title: '🔒Временно недоступно🔒', target: null }
-    ];
+<script>
+  const mainSections = [
+    { title: 'Виртуальные номера', target: 'virtual-numbers' },
+    { title: 'Аккаунты', target: 'accounts' },
+    { title: '🔒Временно недоступно🔒', target: null },
+    { title: '🔒Временно недоступно🔒', target: null },
+    { title: '🔒Временно недоступно🔒', target: null }
+  ];
 
-    const virtualNumbers = [
-      {
-        title: 'Виртуальный номер для России +7 912 345 67 89',
-        description: 'Виртуальный номер для получения СМС на территории России.',
-        price: '55RUB',
-        image: 'path_to_image_1.jpg',
-        country: 'Россия'
-      },
-      {
-        title: 'Виртуальный номер для Кении +254 701 234 567',
-        description: 'Виртуальный номер для получения СМС в Кении.',
-        price: '56RUB',
-        image: 'path_to_image_2.jpg',
-        country: 'Кения'
-      },
-      {
-        title: 'Виртуальный номер для США +1 123 456 7890',
-        description: 'Виртуальный номер для получения СМС в США.',
-        price: '60RUB',
-        image: 'path_to_image_3.jpg',
-        country: 'США'
+  const virtualNumbers = [
+    {
+      title: 'Виртуальный номер для России +7 912 345 67 89',
+      description: 'Виртуальный номер для получения СМС на территории России.',
+      price: '55RUB',
+      image: 'path_to_image_1.jpg',
+      country: 'Россия'
+    },
+    {
+      title: 'Виртуальный номер для Кении +254 701 234 567',
+      description: 'Виртуальный номер для получения СМС в Кении.',
+      price: '56RUB',
+      image: 'path_to_image_2.jpg',
+      country: 'Кения'
+    },
+    {
+      title: 'Виртуальный номер для США +1 123 456 7890',
+      description: 'Виртуальный номер для получения СМС в США.',
+      price: '60RUB',
+      image: 'path_to_image_3.jpg',
+      country: 'США'
+    }
+  ];
+
+  const accounts = [
+    { title: '🔒Не выставлен🔒' },
+    { title: '🔒Не выставлен🔒' },
+    { title: '🔒Скоро🔒' }
+  ];
+
+  let cart = [];
+
+  function renderProducts(products, section) {
+  const productList = document.getElementById('product-list');
+  productList.innerHTML = '';
+
+  products.forEach(product => {
+    const item = document.createElement('div');
+    item.className = 'product-item';
+    item.innerHTML = `<span>${product.title}</span>${product.price ? `<span style="margin-left: auto;">Цена: ${product.price}</span>` : ''}`;
+
+    if (section === 'home') {
+      if (product.target) {
+        item.addEventListener('click', () => {
+          changeContent(product.target);
+        });
+      } else {
+        item.addEventListener('click', () => {
+          alert('Секция недоступна');
+        });
       }
-    ];
-
-    const accounts = [
-      { title: '🔒Не выставлен🔒' },
-      { title: '🔒Не выставлен🔒' },
-      { title: '🔒Скоро🔒' }
-    ];
-
-    let cart = [];
-
-    function renderProducts(products, section) {
-      const productList = document.getElementById('product-list');
-      productList.innerHTML = '';
-
-      products.forEach(product => {
-        const item = document.createElement('div');
-        item.className = 'product-item';
-        item.innerHTML = `<span>${product.title}</span>${product.price ? `<span style="margin-left: auto;">Цена: ${product.price}</span>` : ''}`;
-
-        if (section === 'home') {
-          if (product.target) {
-            item.addEventListener('click', () => {
-              changeContent(product.target);
-            });
-          } else {
-            item.addEventListener('click', () => {
-              alert('Секция недоступна');
-            });
-          }
-        } else {
-          item.addEventListener('click', function () {
-            cart.push(product);
-            alert(`${product.title} добавлен в корзину!`);
-          });
-        }
-
-        productList.appendChild(item);
+    } else {
+      item.addEventListener('click', function () {
+        cart.push(product);
+        alert(`${product.title} добавлен в корзину!`);
       });
     }
 
-    function addBackButton() {
-      const productList = document.getElementById('product-list');
-      const backButton = document.createElement('button');
-      backButton.textContent = 'Вернуться на главную';
-      backButton.addEventListener('click', function () {
-        changeContent('home');
-      });
-      productList.appendChild(backButton);
-    }
+    productList.appendChild(item);
+  });
 
-    function renderCart() {
-  const content = document.getElementById('content');
-  const userInfo = document.querySelector('.user-info').outerHTML;
-  content.innerHTML = `
-    ${userInfo}
-    <h2>Корзина</h2>
-    <ul>
-      ${cart.map(product => `<li>${product.title}</li>`).join('')}
-    </ul>
-    <button class="cart-button" onclick="proceedToCheckout()">Купить</button>
-    <div id="content"></div>
-<div id="qr-content" style="margin-top: 20px;"></div>
-  `;
+
 }
 
-function proceedToCheckout() {
-  if (cart.length > 0) {
-    const orderId = Math.floor(Math.random() * 1000000);  // Уникальный ID заказа
-    const amount = cart.reduce((sum, product) => sum + product.price, 0) * 100;  // Общая сумма в копейках
-    const description = "Оплата заказа №" + orderId;
 
-    // Данные для QR-кода в формате СБП
-    const qrData = `ST00012|Name=ИП Иванов Иван|PersonalAcc=40802810000000000001|BankName=Тинькофф|BIC=044525974|PayeeINN=1234567890|Purpose=${description}|Sum=${amount}`;
-
-    // Генерация QR-кода через внешний API
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
-
-    // Отображение информации о заказе
+  function renderCart() {
     const content = document.getElementById('content');
-    content.innerHTML = `
-      <h2>Оплата заказа №${orderId}</h2>
-      <p>Сумма к оплате: ${(amount / 100).toFixed(2)} ₽</p>
-      <p>Отсканируйте QR-код в приложении банка для оплаты.</p>
-    `;
+    const userInfo = document.querySelector('.user-info').outerHTML;
 
-    // Отображение QR-кода в отдельном div
-    const qrContent = document.getElementById('qr-content');
-    qrContent.innerHTML = `
-      <img src="${qrUrl}" alt="QR для оплаты по СБП" style="max-width: 300px; border: 2px solid #000; padding: 10px; border-radius: 8px;" />
-    `;
-  } else {
-    alert('Ваша корзина пуста!');
-  }
-}
-
-
-
-
-    function renderOrders() {
-      const content = document.getElementById('content');
-      const userInfo = document.querySelector('.user-info').outerHTML;
+    if (cart.length === 0) {
       content.innerHTML = `
         ${userInfo}
-        <h2>Заказы в ожидании</h2>
-        <p>Здесь будут отображаться заказы, ожидающие обработки.</p>
+        <h2>Корзина пуста</h2>
+        <p>Добавьте товары в корзину для оформления заказа.</p>
+        <button onclick="changeContent('home')">Перейти в магазин</button>
       `;
+      return;
     }
 
-    function changeContent(page) {
+    content.innerHTML = `
+      ${userInfo}
+      <h2>Корзина</h2>
+      <ul>
+        ${cart.map(product => `<li>${product.title} - ${product.price}</li>`).join('')}
+      </ul>
+      <button class="cart-button" onclick="proceedToCheckout()">Купить</button>
+      <div id="qr-content" style="margin-top: 20px;"></div>
+    `;
+  }
+
+
+  function addBackButton(content) {
+  console.log("addBackButton вызывается");
+  
+  // Создание кнопки
+  const backButton = document.createElement('button');
+  backButton.textContent = 'Отменить оформление';
+
+  // Стили для кнопки
+  backButton.style.padding = '10px 20px';
+  backButton.style.fontSize = '16px';
+  backButton.style.backgroundColor = '#e74c3c'; // Красный цвет для отмены
+  backButton.style.color = 'white';
+  backButton.style.border = 'none';
+  backButton.style.borderRadius = '5px';
+  backButton.style.cursor = 'pointer';
+  
+  // Обработчик события нажатия
+  backButton.onclick = function () {
+    // Переход на главную страницу или возврат к корзине, зависит от логики
+    changeContent('home');  // Здесь можно использовать 'cart', если вы хотите возврат в корзину
+  };
+
+  // Вставка кнопки в начало блока контента
+  content.insertBefore(backButton, content.firstChild);
+}
+
+
+
+  function proceedToCheckout() {
+    // Страница оформления заказа
+    if (cart.length > 0) {
+      const orderId = Math.floor(Math.random() * 1000000);  // Уникальный ID заказа
+      const amount = cart.reduce((sum, product) => sum + parseFloat(product.price), 0) * 100;  // Общая сумма в копейках
+      const description = "Оплата заказа №" + orderId;
+
+      // Данные для QR-кода в формате СБП
+      const qrData = `ST00012|Name=ИП Иванов Иван|PersonalAcc=40802810000000000001|BankName=Тинькофф|BIC=044525974|PayeeINN=1234567890|Purpose=${description}|Sum=${amount}`;
+
+      // Генерация QR-кода через внешний API
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+
+      // Отображение информации о заказе
       const content = document.getElementById('content');
-      const userInfo = document.querySelector('.user-info').outerHTML;
+      content.innerHTML = `
+        <h2>Оплата заказа №${orderId}</h2>
+        <p>Сумма к оплате: ${(amount / 100).toFixed(2)} ₽</p>
+        <p>Отсканируйте QR-код в приложении банка для оплаты.</p>
+      `;
+      
+      // Показываем блок контента
+      content.style.display = 'block';
 
-      switch (page) {
-        case 'home':
-          content.innerHTML = `
-            ${userInfo}
-            <h2>Главная страница</h2>
-            <p>Добро пожаловать на главную страницу!</p>
-            <h3>Выберите раздел товаров</h3>
-            <div class="product-list" id="product-list"></div>
-          `;
-          renderProducts(mainSections, 'home');
-          break;
+      // Отображение QR-кода в отдельном div
+      const qrContent = document.getElementById('qr-content');
+      qrContent.innerHTML = `    
+        <img src="${qrUrl}" alt="QR для оплаты по СБП" style="max-width: 300px; border: 2px solid #000; padding: 10px; border-radius: 8px;" />
+      `;
+      
+      // Показываем блок с QR-кодом
+      qrContent.style.display = 'block';
 
-        case 'terms':
-          content.innerHTML = `
-            ${userInfo}
-            <h2>Пользовательское соглашение</h2>
-            <h1>Пользовательское соглашение</h1>
-            <p><strong>Последнее обновление: 7 февраля 2025 года</strong></p>
-            <p>Настоящее соглашение регулирует использование сервиса Telesim.tg. Пожалуйста, внимательно прочитайте его перед использованием.</p>
-            <h2>1. Общие положения</h2>
-            <ul>
-              <li>Используя Сервис, вы соглашаетесь с условиями этого соглашения.</li>
-              <li>Мы можем изменять условия без предварительного уведомления. Проверьте актуальность соглашения на странице.</li>
-            </ul>
-            <h2>2. Описание сервиса</h2>
-            <ul>
-              <li>Сервис предоставляет услуги виртуальных номеров, аккаунтов и других продуктов.</li>
-              <li>Все услуги предоставляются на условиях "как есть".</li>
-            </ul>
-            <h2>3. Права и обязанности пользователей</h2>
-            <ul>
-              <li>Используйте Сервис только для законных целей.</li>
-              <li>Запрещено вмешательство в работу Сервиса и распространение вирусов.</li>
-              <li>Предоставляйте только точные данные.</li>
-            </ul>
-            <h2>4. Платежи и возвраты</h2>
-            <ul>
-              <li>Платежи окончательны и не подлежат возврату, если не предусмотрено иным.</li>
-              <li>Цены могут быть изменены без уведомления.</li>
-            </ul>
-            <h2>5. Конфиденциальность</h2>
-            <ul>
-              <li>Мы обязуемся не передавать ваши данные третьим лицам, если это не требуется по закону.</li>
-              <li>Данные могут использоваться для предоставления услуг и маркетинга.</li>
-            </ul>
-            <h2>6. Ограничение ответственности</h2>
-            <ul>
-              <li>Мы не несём ответственности за убытки, связанные с использованием Сервиса.</li>
-              <li>Не гарантируется отсутствие ошибок и сбоев в работе Сервиса.</li>
-            </ul>
-            <h2>7. Прекращение действия соглашения</h2>
-            <ul>
-              <li>Мы можем приостановить или прекратить доступ без уведомления, если нарушены условия.</li>
-              <li>После прекращения доступ к Сервису будет ограничен.</li>
-            </ul>
-            <h2>8. Заключительные положения</h2>
-            <ul>
-              <li>Все споры решаются в соответствии с законодательством.</li>
-              <li>Если какое-то положение признано недействительным, остальные остаются в силе.</li>
-              <li>Соглашение вступает в силу с момента вашего акцепта.</li>
-            </ul>
-            <p>Пожалуйста, ознакомьтесь с условиями предоставления услуг.</p>
-            <button onclick="changeContent('home')">Вернуться на главную</button>
-          `;
-          break;
-
-        case 'virtual-numbers':
-          content.innerHTML = `
-            ${userInfo}
-            <h2>Виртуальные номера</h2>
-            <div class="product-list" id="product-list"></div>
-          `;
-          renderProducts(virtualNumbers, 'virtual-numbers');
-          addBackButton();
-          break;
-
-        case 'accounts':
-          content.innerHTML = `
-            ${userInfo}
-            <h2>Аккаунты</h2>
-            <div class="product-list" id="product-list"></div>
-          `;
-          renderProducts(accounts, 'accounts');
-          addBackButton();
-          break;
-
-        case 'cart':
-          renderCart();
-          break;
-
-        case 'orders':
-          renderOrders();
-          break;
-
-        default:
-          content.innerHTML = `
-            ${userInfo}
-            <h2>Главная страница</h2>
-            <p>Добро пожаловать на главную страницу!</p>
-            <h3>Выберите раздел товаров</h3>
-            <div class="product-list" id="product-list"></div>
-          `;
-          renderProducts(mainSections, 'home');
-      }
+      // Добавление кнопки "Отменить оформление" непосредственно на страницу оформления заказа
+      addBackButton(content);  // Используем функцию для добавления кнопки
+    } else {
+      alert('Ваша корзина пуста!');
     }
+  }
 
-    window.addEventListener('load', function () {
-      changeContent('home');
-    });
-  </script>
+  // Функция для добавления кнопки возврата на главную в раздел оформления заказа
+
+
+  // Функция для отображения информации о заказах
+  function renderOrders() {
+    const content = document.getElementById('content');
+    const userInfo = document.querySelector('.user-info').outerHTML;
+    content.innerHTML = `
+      ${userInfo}
+      <h2>Заказы в ожидании</h2>
+      <p>Здесь будут отображаться заказы, ожидающие обработки.</p>
+    `;
+  }
+
+  function changeContent(page) {
+    const content = document.getElementById('content');
+    const userInfo = document.querySelector('.user-info').outerHTML;
+
+    switch (page) {
+      case 'home':
+        content.innerHTML = `
+          ${userInfo}
+          <h2>Главная страница</h2>
+          <p>Добро пожаловать на главную страницу!</p>
+          <h3>Выберите раздел товаров</h3>
+          <div class="product-list" id="product-list"></div>
+        `;
+        renderProducts(mainSections, 'home');
+        break;
+
+      case 'terms':
+        content.innerHTML = `
+          ${userInfo}
+          <h2>Пользовательское соглашение</h2>
+          <h1>Пользовательское соглашение</h1>
+          <p><strong>Последнее обновление: 7 февраля 2025 года</strong></p>
+          <p>Настоящее соглашение регулирует использование сервиса Telesim.tg. Пожалуйста, внимательно прочитайте его перед использованием.</p>
+          <h2>1. Общие положения</h2>
+          <ul>
+            <li>Используя Сервис, вы соглашаетесь с условиями этого соглашения.</li>
+            <li>Мы можем изменять условия без предварительного уведомления. Проверьте актуальность соглашения на странице.</li>
+          </ul>
+          <h2>2. Описание сервиса</h2>
+          <ul>
+            <li>Сервис предоставляет услуги виртуальных номеров, аккаунтов и других продуктов.</li>
+            <li>Все услуги предоставляются на условиях "как есть".</li>
+          </ul>
+          <h2>3. Права и обязанности пользователей</h2>
+          <ul>
+            <li>Используйте Сервис только для законных целей.</li>
+            <li>Запрещено вмешательство в работу Сервиса и распространение вирусов.</li>
+            <li>Предоставляйте только точные данные.</li>
+          </ul>
+          <h2>4. Платежи и возвраты</h2>
+          <ul>
+            <li>Платежи окончательны и не подлежат возврату, если не предусмотрено иным.</li>
+            <li>Цены могут быть изменены без уведомления.</li>
+          </ul>
+          <h2>5. Конфиденциальность</h2>
+          <ul>
+            <li>Мы обязуемся не передавать ваши данные третьим лицам, если это не требуется по закону.</li>
+            <li>Данные могут использоваться для предоставления услуг и маркетинга.</li>
+          </ul>
+          <h2>6. Ограничение ответственности</h2>
+          <ul>
+            <li>Мы не несём ответственности за убытки, связанные с использованием Сервиса.</li>
+            <li>Не гарантируется отсутствие ошибок и сбоев в работе Сервиса.</li>
+          </ul>
+          <h2>7. Прекращение действия соглашения</h2>
+          <ul>
+            <li>Мы можем приостановить или прекратить доступ без уведомления, если нарушены условия.</li>
+            <li>После прекращения доступ к Сервису будет ограничен.</li>
+          </ul>
+          <h2>8. Заключительные положения</h2>
+          <ul>
+            <li>Все споры решаются в соответствии с законодательством.</li>
+            <li>Если какое-то положение признано недействительным, остальные остаются в силе.</li>
+            <li>Соглашение вступает в силу с момента вашего акцепта.</li>
+          </ul>
+          <p>Пожалуйста, ознакомьтесь с условиями предоставления услуг.</p>
+          <button onclick="changeContent('home')">Вернуться на главную</button>
+        `;
+        break;
+
+      case 'virtual-numbers':
+        content.innerHTML = `
+          ${userInfo}
+          <h2>Виртуальные номера</h2>
+          <div class="product-list" id="product-list"></div>
+        `;
+        renderProducts(virtualNumbers, 'virtual-numbers');
+        break;
+
+      case 'accounts':
+        content.innerHTML = `
+          ${userInfo}
+          <h2>Аккаунты</h2>
+          <div class="product-list" id="product-list"></div>
+        `;
+        renderProducts(accounts, 'accounts');
+        break;
+
+      case 'cart':
+        renderCart();
+        break;
+
+      case 'orders':
+        renderOrders();
+        break;
+
+      default:
+        content.innerHTML = `
+          ${userInfo}
+          <h2>Главная страница</h2>
+          <p>Добро пожаловать на главную страницу!</p>
+          <h3>Выберите раздел товаров</h3>
+          <div class="product-list" id="product-list"></div>
+        `;
+        renderProducts(mainSections, 'home');
+    }
+  }
+
+  window.addEventListener('load', function () {
+    changeContent('home');
+  });
+</script>
+
 
   <script>
     const socket = new WebSocket('ws://localhost:3000'); // Локальный сервер
