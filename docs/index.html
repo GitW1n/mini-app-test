@@ -173,6 +173,40 @@ button:hover {
     <button onclick="goHome()">
       <img src="https://img.icons8.com/?size=100&id=s7mPVCB5sKGa&format=png&color=ffffff" alt="Home" />
     </button>
+
+    <script>
+      // Функция для перехода на главную страницу
+      function goHome() {
+        changeContent('home');  // Возвращаем пользователя на главную страницу
+      }
+    
+      // Функция для изменения содержимого страницы
+      function changeContent(page) {
+        const content = document.getElementById('content');
+        const userInfo = document.querySelector('.user-info').outerHTML;
+    
+        switch (page) {
+          case 'home':
+            content.innerHTML = `
+              ${userInfo}
+              <h2>Главная страница</h2>
+              <p>Добро пожаловать на главную страницу!</p>
+              <h3>Выберите раздел товаров</h3>
+              <div class="product-list" id="product-list"></div>
+            `;
+            renderProducts(mainSections, 'home');
+            break;
+    
+          // Другие случаи
+          default:
+            content.innerHTML = `${userInfo} <h2>Главная страница</h2><p>Добро пожаловать на главную страницу!</p>`;
+        }
+      }
+    
+      window.addEventListener('load', function () {
+        changeContent('home');
+      });
+    </script>
   
     <!-- Кнопка перехода в корзину -->
     <button onclick="changeContent('cart')">
@@ -290,6 +324,7 @@ button:hover {
           changeContent(product.target);
         });
       } else {
+        item.style.cursor = 'not-allowed';  // Устанавливаем стиль для неактивных разделов
         item.addEventListener('click', () => {
           alert('Секция недоступна');
         });
@@ -303,9 +338,8 @@ button:hover {
 
     productList.appendChild(item);
   });
-
-
 }
+
 
 
   function renderCart() {
