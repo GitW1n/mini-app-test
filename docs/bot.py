@@ -24,7 +24,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Отправляем сообщение с изображением и кнопками
     await update.message.reply_photo(
         photo=open(image_path, 'rb'), 
-        caption='Выберите виртуальный номер для покупки:', 
+        caption='Добро пожаловать в Telesim.tg! Войдите в приложение для продолжения:', 
         reply_markup=reply_markup
     )
 

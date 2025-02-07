@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+b<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -134,7 +134,7 @@
     <h1>Telesim.tg</h1>
     <div class="clock" id="clock"></div>
   </header>
-  
+
   <div class="terms-link"> 
     <p>Пожалуйста, ознакомьтесь с нашим <a href="#" onclick="changeContent('terms')">пользовательским соглашением</a>.</p>
   </div>  
@@ -144,44 +144,64 @@
       <img id="profile-picture" src="images/profile.png" alt="Profile Picture" />
       <span id="username">Username</span>
     </div>
-    
-    <!-- Контент будет динамически подставляться сюда -->
   </div>
-  
+
   <div class="icon-buttons">
     <button onclick="changeContent('home')">
       <img src="https://img.icons8.com/?size=100&id=s7mPVCB5sKGa&format=png&color=ffffff" alt="Home" />
     </button>
-    
+
     <button onclick="changeContent('cart')">
       <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="Cart" />
     </button>
-    
+
     <button onclick="changeContent('orders')">
       <img src="https://img.icons8.com/ios/452/order-delivered.png" alt="Orders" />
     </button>
   </div>
-  
-<script>
-function showCurrentTime() {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const currentTime = `${hours}:${minutes}:${seconds}`;
 
-  document.getElementById('clock').textContent = currentTime;
-}
-
-// Обновление времени каждую секунду
-setInterval(showCurrentTime, 1000);
-
-// Первоначальный вызов для мгновенного отображения времени
-showCurrentTime();
-</script>
   <script>
-    
-    // Массив с разделами главной страницы
+    function showCurrentTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const currentTime = `${hours}:${minutes}:${seconds}`;
+
+      document.getElementById('clock').textContent = currentTime;
+    }
+
+    // Обновление времени
+    setInterval(showCurrentTime, 1000);
+    showCurrentTime();
+  </script>
+
+  <style>
+    .product-details {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .product-details img {
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 20px;
+    }
+
+    .product-details button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #ff9900;
+      border: none;
+      cursor: pointer;
+    }
+
+    .product-details button:hover {
+      background-color: #ff7f00;
+    }
+  </style>
+
+  <script>
     const mainSections = [
       { title: 'Виртуальные номера', target: 'virtual-numbers' },
       { title: 'Аккаунты', target: 'accounts' },
@@ -189,37 +209,49 @@ showCurrentTime();
       { title: '🔒Временно недоступно🔒', target: null },
       { title: '🔒Временно недоступно🔒', target: null }
     ];
-    
-    // Товары для раздела "Виртуальные номера" (номера телефонов)
+
     const virtualNumbers = [
-      { title: '+7 912 345 67 89' },
-      { title: '+254 701 234 567' },
-      { title: '+254 722 987 654' }
+      {
+        title: 'Виртуальный номер для России +7 912 345 67 89',
+        description: 'Виртуальный номер для получения СМС на территории России.',
+        price: '55RUB',
+        image: 'path_to_image_1.jpg',
+        country: 'Россия'
+      },
+      {
+        title: 'Виртуальный номер для Кении +254 701 234 567',
+        description: 'Виртуальный номер для получения СМС в Кении.',
+        price: '56RUB',
+        image: 'path_to_image_2.jpg',
+        country: 'Кения'
+      },
+      {
+        title: 'Виртуальный номер для США +1 123 456 7890',
+        description: 'Виртуальный номер для получения СМС в США.',
+        price: '60RUB',
+        image: 'path_to_image_3.jpg',
+        country: 'США'
+      }
     ];
-    
-    // Товары для раздела "Аккаунты"
+
     const accounts = [
       { title: '🔒Не выставлен🔒' },
       { title: '🔒Не выставлен🔒' },
       { title: '🔒Скоро🔒' }
     ];
-    
-    // Корзина (товары, добавленные пользователем)
+
     let cart = [];
-    
-    // Функция для рендеринга списка товаров или разделов
-    // section: 'home' для главной, 'virtual-numbers' или 'accounts' для категорий
+
     function renderProducts(products, section) {
       const productList = document.getElementById('product-list');
-      productList.innerHTML = ''; // Очищаем список
-      
+      productList.innerHTML = '';
+
       products.forEach(product => {
         const item = document.createElement('div');
         item.className = 'product-item';
-        item.innerHTML = `<span>${product.title}</span>`;
-        
+        item.innerHTML = `<span>${product.title}</span>${product.price ? `<span style="margin-left: auto;">Цена: ${product.price}</span>` : ''}`;
+
         if (section === 'home') {
-          // Для главной страницы – навигация по разделам
           if (product.target) {
             item.addEventListener('click', () => {
               changeContent(product.target);
@@ -230,18 +262,16 @@ showCurrentTime();
             });
           }
         } else {
-          // Для категорий товаров – при клике товар добавляется в корзину
           item.addEventListener('click', function () {
             cart.push(product);
             alert(`${product.title} добавлен в корзину!`);
           });
         }
-        
+
         productList.appendChild(item);
       });
     }
-    
-    // Функция для добавления кнопки "Вернуться на главную" (на страницах категорий)
+
     function addBackButton() {
       const productList = document.getElementById('product-list');
       const backButton = document.createElement('button');
@@ -251,21 +281,55 @@ showCurrentTime();
       });
       productList.appendChild(backButton);
     }
-    
-    // Функция для отображения корзины
+
     function renderCart() {
-      const content = document.getElementById('content');
-      const userInfo = document.querySelector('.user-info').outerHTML;
-      content.innerHTML = `
-        ${userInfo}
-        <h2>Корзина</h2>
-        <ul>
-          ${cart.map(product => `<li>${product.title}</li>`).join('')}
-        </ul>
-      `;
-    }
-    
-    // Функция для отображения заказов в ожидании
+  const content = document.getElementById('content');
+  const userInfo = document.querySelector('.user-info').outerHTML;
+  content.innerHTML = `
+    ${userInfo}
+    <h2>Корзина</h2>
+    <ul>
+      ${cart.map(product => `<li>${product.title}</li>`).join('')}
+    </ul>
+    <button class="cart-button" onclick="proceedToCheckout()">Купить</button>
+    <div id="content"></div>
+<div id="qr-content" style="margin-top: 20px;"></div>
+  `;
+}
+
+function proceedToCheckout() {
+  if (cart.length > 0) {
+    const orderId = Math.floor(Math.random() * 1000000);  // Уникальный ID заказа
+    const amount = cart.reduce((sum, product) => sum + product.price, 0) * 100;  // Общая сумма в копейках
+    const description = "Оплата заказа №" + orderId;
+
+    // Данные для QR-кода в формате СБП
+    const qrData = `ST00012|Name=ИП Иванов Иван|PersonalAcc=40802810000000000001|BankName=Тинькофф|BIC=044525974|PayeeINN=1234567890|Purpose=${description}|Sum=${amount}`;
+
+    // Генерация QR-кода через внешний API
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+
+    // Отображение информации о заказе
+    const content = document.getElementById('content');
+    content.innerHTML = `
+      <h2>Оплата заказа №${orderId}</h2>
+      <p>Сумма к оплате: ${(amount / 100).toFixed(2)} ₽</p>
+      <p>Отсканируйте QR-код в приложении банка для оплаты.</p>
+    `;
+
+    // Отображение QR-кода в отдельном div
+    const qrContent = document.getElementById('qr-content');
+    qrContent.innerHTML = `
+      <img src="${qrUrl}" alt="QR для оплаты по СБП" style="max-width: 300px; border: 2px solid #000; padding: 10px; border-radius: 8px;" />
+    `;
+  } else {
+    alert('Ваша корзина пуста!');
+  }
+}
+
+
+
+
     function renderOrders() {
       const content = document.getElementById('content');
       const userInfo = document.querySelector('.user-info').outerHTML;
@@ -275,187 +339,231 @@ showCurrentTime();
         <p>Здесь будут отображаться заказы, ожидающие обработки.</p>
       `;
     }
-    
-    // Функция смены содержимого страницы
+
     function changeContent(page) {
-  const content = document.getElementById('content');
-  const userInfo = document.querySelector('.user-info').outerHTML;
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info').outerHTML;
 
-  switch (page) {
-    case 'home':
-      content.innerHTML = `
-        ${userInfo}
-        <h2>Главная страница</h2>
-        <p>Добро пожаловать на главную страницу!</p>
-        <h3>Выберите раздел товаров</h3>
-        <div class="product-list" id="product-list"></div>
-      `;
-      renderProducts(mainSections, 'home');
-      break;
+      switch (page) {
+        case 'home':
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Главная страница</h2>
+            <p>Добро пожаловать на главную страницу!</p>
+            <h3>Выберите раздел товаров</h3>
+            <div class="product-list" id="product-list"></div>
+          `;
+          renderProducts(mainSections, 'home');
+          break;
 
-    case 'terms':
-      content.innerHTML = `
-        ${userInfo}
-        <h2>Пользовательское соглашение</h2>
-        <h1>Пользовательское соглашение</h1>
+        case 'terms':
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Пользовательское соглашение</h2>
+            <h1>Пользовательское соглашение</h1>
+            <p><strong>Последнее обновление: 7 февраля 2025 года</strong></p>
+            <p>Настоящее соглашение регулирует использование сервиса Telesim.tg. Пожалуйста, внимательно прочитайте его перед использованием.</p>
+            <h2>1. Общие положения</h2>
+            <ul>
+              <li>Используя Сервис, вы соглашаетесь с условиями этого соглашения.</li>
+              <li>Мы можем изменять условия без предварительного уведомления. Проверьте актуальность соглашения на странице.</li>
+            </ul>
+            <h2>2. Описание сервиса</h2>
+            <ul>
+              <li>Сервис предоставляет услуги виртуальных номеров, аккаунтов и других продуктов.</li>
+              <li>Все услуги предоставляются на условиях "как есть".</li>
+            </ul>
+            <h2>3. Права и обязанности пользователей</h2>
+            <ul>
+              <li>Используйте Сервис только для законных целей.</li>
+              <li>Запрещено вмешательство в работу Сервиса и распространение вирусов.</li>
+              <li>Предоставляйте только точные данные.</li>
+            </ul>
+            <h2>4. Платежи и возвраты</h2>
+            <ul>
+              <li>Платежи окончательны и не подлежат возврату, если не предусмотрено иным.</li>
+              <li>Цены могут быть изменены без уведомления.</li>
+            </ul>
+            <h2>5. Конфиденциальность</h2>
+            <ul>
+              <li>Мы обязуемся не передавать ваши данные третьим лицам, если это не требуется по закону.</li>
+              <li>Данные могут использоваться для предоставления услуг и маркетинга.</li>
+            </ul>
+            <h2>6. Ограничение ответственности</h2>
+            <ul>
+              <li>Мы не несём ответственности за убытки, связанные с использованием Сервиса.</li>
+              <li>Не гарантируется отсутствие ошибок и сбоев в работе Сервиса.</li>
+            </ul>
+            <h2>7. Прекращение действия соглашения</h2>
+            <ul>
+              <li>Мы можем приостановить или прекратить доступ без уведомления, если нарушены условия.</li>
+              <li>После прекращения доступ к Сервису будет ограничен.</li>
+            </ul>
+            <h2>8. Заключительные положения</h2>
+            <ul>
+              <li>Все споры решаются в соответствии с законодательством.</li>
+              <li>Если какое-то положение признано недействительным, остальные остаются в силе.</li>
+              <li>Соглашение вступает в силу с момента вашего акцепта.</li>
+            </ul>
+            <p>Пожалуйста, ознакомьтесь с условиями предоставления услуг.</p>
+            <button onclick="changeContent('home')">Вернуться на главную</button>
+          `;
+          break;
 
-  <p><strong>Последнее обновление: 7 февраля 2025 года</strong></p>
+        case 'virtual-numbers':
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Виртуальные номера</h2>
+            <div class="product-list" id="product-list"></div>
+          `;
+          renderProducts(virtualNumbers, 'virtual-numbers');
+          addBackButton();
+          break;
 
-  <p>Настоящее соглашение регулирует использование сервиса Telesim.tg. Пожалуйста, внимательно прочитайте его перед использованием.</p>
+        case 'accounts':
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Аккаунты</h2>
+            <div class="product-list" id="product-list"></div>
+          `;
+          renderProducts(accounts, 'accounts');
+          addBackButton();
+          break;
 
-  <h2>1. Общие положения</h2>
-  <ul>
-    <li>Используя Сервис, вы соглашаетесь с условиями этого соглашения.</li>
-    <li>Мы можем изменять условия без предварительного уведомления. Проверьте актуальность соглашения на странице.</li>
-  </ul>
+        case 'cart':
+          renderCart();
+          break;
 
-  <h2>2. Описание сервиса</h2>
-  <ul>
-    <li>Сервис предоставляет услуги виртуальных номеров, аккаунтов и других продуктов.</li>
-    <li>Все услуги предоставляются на условиях "как есть".</li>
-  </ul>
+        case 'orders':
+          renderOrders();
+          break;
 
-  <h2>3. Права и обязанности пользователей</h2>
-  <ul>
-    <li>Используйте Сервис только для законных целей.</li>
-    <li>Запрещено вмешательство в работу Сервиса и распространение вирусов.</li>
-    <li>Предоставляйте только точные данные.</li>
-  </ul>
+        default:
+          content.innerHTML = `
+            ${userInfo}
+            <h2>Главная страница</h2>
+            <p>Добро пожаловать на главную страницу!</p>
+            <h3>Выберите раздел товаров</h3>
+            <div class="product-list" id="product-list"></div>
+          `;
+          renderProducts(mainSections, 'home');
+      }
+    }
 
-  <h2>4. Платежи и возвраты</h2>
-  <ul>
-    <li>Платежи окончательны и не подлежат возврату, если не предусмотрено иным.</li>
-    <li>Цены могут быть изменены без уведомления.</li>
-  </ul>
-
-  <h2>5. Конфиденциальность</h2>
-  <ul>
-    <li>Мы обязуемся не передавать ваши данные третьим лицам, если это не требуется по закону.</li>
-    <li>Данные могут использоваться для предоставления услуг и маркетинга.</li>
-  </ul>
-
-  <h2>6. Ограничение ответственности</h2>
-  <ul>
-    <li>Мы не несём ответственности за убытки, связанные с использованием Сервиса.</li>
-    <li>Не гарантируется отсутствие ошибок и сбоев в работе Сервиса.</li>
-  </ul>
-
-  <h2>7. Прекращение действия соглашения</h2>
-  <ul>
-    <li>Мы можем приостановить или прекратить доступ без уведомления, если нарушены условия.</li>
-    <li>После прекращения доступ к Сервису будет ограничен.</li>
-  </ul>
-
-  <h2>8. Заключительные положения</h2>
-  <ul>
-    <li>Все споры решаются в соответствии с законодательством.</li>
-    <li>Если какое-то положение признано недействительным, остальные остаются в силе.</li>
-    <li>Соглашение вступает в силу с момента вашего акцепта.</li>
-  </ul>
-        <p>Пожалуйста, ознакомьтесь с условиями предоставления услуг.</p>
-        <button onclick="changeContent('home')">Вернуться на главную</button>
-      `;
-      break;
-
-    case 'virtual-numbers':
-      content.innerHTML = `
-        ${userInfo}
-        <h2>Виртуальные номера</h2>
-        <div class="product-list" id="product-list"></div>
-      `;
-      renderProducts(virtualNumbers, 'virtual-numbers');
-      addBackButton();
-      break;
-
-    case 'accounts':
-      content.innerHTML = `
-        ${userInfo}
-        <h2>Аккаунты</h2>
-        <div class="product-list" id="product-list"></div>
-      `;
-      renderProducts(accounts, 'accounts');
-      addBackButton();
-      break;
-
-    case 'cart':
-      renderCart();
-      break;
-
-    case 'orders':
-      renderOrders();
-      break;
-
-    default:
-      content.innerHTML = `
-        ${userInfo}
-        <h2>Главная страница</h2>
-        <p>Добро пожаловать на главную страницу!</p>
-        <h3>Выберите раздел товаров</h3>
-        <div class="product-list" id="product-list"></div>
-      `;
-      renderProducts(mainSections, 'home');
-  }
-}
-
-    
     window.addEventListener('load', function () {
       changeContent('home');
     });
+  </script>
 
-    // Добавление цен к товарам в существующие списки
-virtualNumbers.forEach((item, index) => {
-  const prices = ['55RUB', '56RUB', '43RUB'];
-  item.price = prices[index];
-});
+  <script>
+    const socket = new WebSocket('ws://localhost:3000'); // Локальный сервер
 
-accounts.forEach((item, index) => {
-  const prices = ['--', '--', '--'];
-  item.price = prices[index];
-});
+    socket.onopen = function () {
+      console.log('Подключено к серверу для получения уведомлений');
+    };
 
-// Обновление функции рендеринга товаров
-function renderProducts(products, section) {
-  const productList = document.getElementById('product-list');
-  productList.innerHTML = ''; // Очищаем список
+    socket.onmessage = function (event) {
+      const notification = JSON.parse(event.data);
+      showNotification(notification.message);
+    };
 
-  products.forEach(product => {
-    const item = document.createElement('div');
-    item.className = 'product-item';
-    item.innerHTML = `<span>${product.title}</span>${product.price ? `<span style="margin-left: auto;">Цена: ${product.price}</span>` : ''}`;
+    socket.onerror = function (error) {
+      console.error('Ошибка WebSocket: ', error);
+    };
 
-    if (section === 'home') {
-      if (product.target) {
-        item.addEventListener('click', () => {
-          changeContent(product.target);
-        });
-      } else {
-        item.addEventListener('click', () => {
-          alert('Секция недоступна');
-        });
-      }
-    } else {
-      item.addEventListener('click', function () {
-        cart.push(product);
-        alert(`${product.title} добавлен в корзину!`);
-      });
+    function showNotification(message) {
+      const notificationDiv = document.createElement('div');
+      notificationDiv.className = 'notification';
+      notificationDiv.textContent = message;
+
+      document.body.appendChild(notificationDiv);
+
+      setTimeout(() => {
+        notificationDiv.remove();
+      }, 5000);
     }
 
-    productList.appendChild(item);
-  });
+    async function fetchProducts() {
+      const response = await fetch('http://localhost:3000/api/products');
+      const data = await response.json();
+      return data;
+    }
+
+    async function addToCart(product) {
+      await fetch('http://localhost:3000/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
+    }
+  </script>
+
+  <style>
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #3498db;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+<style>
+  .cart-button {
+    padding: 10px 20px;
+    background-color: #ff9900;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .cart-button:hover {
+    background-color: #ff7f00;
+    transform: scale(1.05); /* Увеличивает кнопку при наведении */
+  }
+
+  .cart-button:active {
+    background-color: #e67e00;
+    transform: scale(1);
+  }
+</style>
+
+<style>#qr-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }
 
-// Обновление функции отображения корзины
-function renderCart() {
-  const content = document.getElementById('content');
-  const userInfo = document.querySelector('.user-info').outerHTML;
-  content.innerHTML = `
-    ${userInfo}
-    <h2>Корзина</h2>
-    <ul>
-      ${cart.map(product => `<li>${product.title} - ${product.price ? product.price : 'Цена не указана'}</li>`).join('')}
-    </ul>
-  `;
+#qr-content img {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
 }
-  </script>
+
+#qr-content img:hover {
+  transform: scale(1.05);
+}
+</style>
+
 </body>
+
 </html>
