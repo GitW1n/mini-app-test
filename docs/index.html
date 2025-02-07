@@ -1,4 +1,4 @@
-b<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -125,6 +125,22 @@ b<!DOCTYPE html>
       width: 30px;
       height: 30px;
     }
+
+    button {
+  padding: 10px 15px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+
   </style>
 
 
@@ -132,9 +148,15 @@ b<!DOCTYPE html>
 <body>
   <header class="header">
     <h1>Telesim.tg</h1>
+    
     <div class="clock" id="clock"></div>
   </header>
-
+  <div class="header" id="adm">Важные функции сейчас в разработке, пожалуйста подождите!</div>
+  
+  <style> #adm {
+    color: #e1ff00;
+  }</style>
+  
   <div class="terms-link"> 
     <p>Пожалуйста, ознакомьтесь с нашим <a href="#" onclick="changeContent('terms')">пользовательским соглашением</a>.</p>
   </div>  
