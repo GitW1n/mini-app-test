@@ -27,7 +27,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     keyboard = [
         [InlineKeyboardButton("Перейти в MiniApp", web_app=WebAppInfo(url='https://gitw1n.github.io/mini-app-test/'))]
-    [InlineKeyboardButton("Проверить баланс (Можно по команде /balance)", callback_data='check_balance')]
+    ,[InlineKeyboardButton("Проверить баланс (Можно по команде /balance)", callback_data='check_balance')]
     ]
     image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\docs\images\logo.jpg'
     reply_markup = InlineKeyboardMarkup(keyboard)
