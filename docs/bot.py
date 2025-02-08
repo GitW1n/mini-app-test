@@ -1,6 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 from telegram.ext import MessageHandler, filters
+from telegram import InputMediaPhoto
 from dotenv import load_dotenv
 import os
 
@@ -26,14 +27,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     balance = user_balances[user_id]
 
     keyboard = [
-        [InlineKeyboardButton("Перейти в MiniApp", web_app=WebAppInfo(url='https://gitw1n.github.io/mini-app-test/'))]
-    ,[InlineKeyboardButton("Проверить баланс (Можно по команде /balance)", callback_data='check_balance')]
+        [InlineKeyboardButton("Перейти в MiniApp", web_app=WebAppInfo(url='https://gitw1n.github.io/mini-app-test/'))],
+        [InlineKeyboardButton("Проверить баланс (Можно по команде /balance)", callback_data='check_balance')]
     ]
     image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\docs\images\logo.jpg'
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     # 👤 Отображаем имя пользователя и баланс
-    caption = f'Добро пожаловать, {username} 💰 {balance}₽!\nВойдите в приложение для продолжения:'
+    caption = f'Добро пожаловать, {username}!\nВойдите в приложение для продолжения:'
 
     await update.message.reply_photo(
         photo=open(image_path, 'rb'),
@@ -48,14 +49,20 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     choice = query.data
 
-    if choice == 'number_1':
-        response = "Вы выбрали Виртуальный номер 1. Цена: 10$. Для покупки напишите /buy_1."
-    elif choice == 'check_balance':
+    if choice == 'check_balance':
+        user_id = update.effective_user.id
+        balance = user_balances.get(user_id, 0)
         response = f"Ваш текущий баланс: 💰 {balance}₽"
     else:
         response = "Неизвестный выбор."
 
-    await query.edit_message_text(text=response)
+    # Если сообщение содержит изображение, используем edit_message_media
+    if query.message.photo:
+        # Используем InputMediaPhoto для добавления caption
+        media = InputMediaPhoto(media=query.message.photo[0].file_id, caption=response)
+        await query.edit_message_media(media=media)
+    else:
+        await query.edit_message_text(text=response)
 
 # Функция для обработки покупки
 async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
