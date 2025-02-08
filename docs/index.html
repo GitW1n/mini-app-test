@@ -272,7 +272,7 @@ button:hover {
   const mainSections = [
     { title: 'Виртуальные номера', target: 'virtual-numbers' },
     { title: 'Аккаунты', target: 'accounts' },
-    { title: '🔒Временно недоступно🔒', target: null },
+    { title: 'Подписки', target: 'subscriptions' },
     { title: '🔒Временно недоступно🔒', target: null },
     { title: '🔒Временно недоступно🔒', target: null }
   ];
@@ -304,7 +304,15 @@ button:hover {
   const accounts = [
     { title: '🔒Не выставлен🔒' },
     { title: '🔒Не выставлен🔒' },
-    { title: '🔒Скоро🔒' }
+    { title: '🔒Не выставлен🔒' }
+  ];
+
+  const subscriptions = [
+  {
+      title: 'Подписка',
+      description: '--',
+      price: '--RUB',
+    }
   ];
 
   let cart = [];
@@ -562,6 +570,8 @@ button:hover {
     changeContent('home');
   });
 </script>
+
+
 
 
   <script>
