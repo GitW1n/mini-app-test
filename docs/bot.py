@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 from dotenv import load_dotenv
 import os
@@ -7,24 +7,21 @@ import os
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 
+# Инициализация приложения
 application = Application.builder().token(TOKEN).build()
 
 # Функция для отправки стартового сообщения с кнопками
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    # Создаем кнопки с web_app для MiniApp
     keyboard = [
-        [InlineKeyboardButton("Перейти в MiniApp", web_app={'url': 'https://gitw1n.github.io/mini-app-test/'})]  # Ссылка на ваш MiniApp
+        [InlineKeyboardButton("Перейти в MiniApp", web_app=WebAppInfo(url='https://gitw1n.github.io/mini-app-test/'))]
     ]
 
     image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\docs\images\logo.jpg'
-
-    # Создаем разметку клавиатуры
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    # Отправляем сообщение с изображением и кнопками
     await update.message.reply_photo(
-        photo=open(image_path, 'rb'), 
-        caption='Добро пожаловать в Telesim.tg! Войдите в приложение для продолжения:', 
+        photo=open(image_path, 'rb'),
+        caption='Добро пожаловать в Telesim.tg! Войдите в приложение для продолжения:',
         reply_markup=reply_markup
     )
 
@@ -33,7 +30,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()  # Подтверждаем нажатие кнопки
 
-    # Получаем данные, связанные с кнопкой
     choice = query.data
 
     if choice == 'number_1':
@@ -41,7 +37,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     else:
         response = "Неизвестный выбор."
 
-    # Отправляем ответ на выбор пользователя
     await query.edit_message_text(text=response)
 
 # Функция для обработки покупки
@@ -54,17 +49,17 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await update.message.reply_text(response)
 
+# Обработчик неизвестных команд
+async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Неизвестная команда. Используйте /start для начала.")
+
 # Основная функция для запуска бота
 def main() -> None:
-    # Строим приложение
-    application = Application.builder().token(TOKEN).build()
-
-    # Регистрируем обработчики команд
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button))
     application.add_handler(CommandHandler("buy_1", buy))
+    application.add_handler(CommandHandler(None, unknown))  # Для неизвестных команд
 
-    # Запускаем бота
     application.run_polling()
 
 # Запуск бота
