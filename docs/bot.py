@@ -11,17 +11,32 @@ TOKEN = os.getenv("BOT_TOKEN")
 # Инициализация приложения
 application = Application.builder().token(TOKEN).build()
 
+# 🗂️ Словарь для хранения баланса пользователей
+user_balances = {}
+
 # Функция для отправки стартового сообщения с кнопками
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    username = update.effective_user.first_name
+
+    # Инициализация баланса, если пользователь запускает впервые
+    if user_id not in user_balances:
+        user_balances[user_id] = 0  # Баланс по умолчанию = 0
+
+    balance = user_balances[user_id]
+
     keyboard = [
         [InlineKeyboardButton("Перейти в MiniApp", web_app=WebAppInfo(url='https://gitw1n.github.io/mini-app-test/'))]
     ]
     image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\docs\images\logo.jpg'
     reply_markup = InlineKeyboardMarkup(keyboard)
 
+    # 👤 Отображаем имя пользователя и баланс
+    caption = f'Добро пожаловать, {username} 💰 {balance}₽!\nВойдите в приложение для продолжения:'
+
     await update.message.reply_photo(
         photo=open(image_path, 'rb'),
-        caption='Добро пожаловать в Telesim.tg! Войдите в приложение для продолжения:',
+        caption=caption,
         reply_markup=reply_markup
     )
 
@@ -41,13 +56,26 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 # Функция для обработки покупки
 async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
     user_message = update.message.text
+
     if user_message == '/buy_1':
-        response = "Вы успешно приобрели Виртуальный номер 1. Подробности на почте."
+        # Проверяем, хватает ли баланса
+        if user_balances.get(user_id, 0) >= 10:
+            user_balances[user_id] -= 10  # Списываем 10₽
+            response = "Вы успешно приобрели Виртуальный номер 1. Подробности на почте."
+        else:
+            response = "Недостаточно средств на балансе. Пополните баланс, чтобы совершить покупку."
     else:
         response = "Для покупки выберите номер через кнопки."
 
     await update.message.reply_text(response)
+
+# 📥 Команда для проверки баланса
+async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    balance = user_balances.get(user_id, 0)
+    await update.message.reply_text(f"Ваш текущий баланс: 💰 {balance}₽")
 
 # Обработчик неизвестных команд
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -56,6 +84,7 @@ async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 # Основная функция для запуска бота
 def main() -> None:
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("balance", balance))  # Команда для просмотра баланса
     application.add_handler(CallbackQueryHandler(button))
     application.add_handler(CommandHandler("buy_1", buy))
     application.add_handler(MessageHandler(filters.COMMAND, unknown))  # Обработка неизвестных команд
