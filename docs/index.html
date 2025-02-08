@@ -193,7 +193,7 @@ button:hover {
               ${userInfo}
               <h2>Главная страница</h2>
               <p>Добро пожаловать на главную страницу!</p>
-              <h3>Выберите раздел товаров</h3>
+              <h3>Выберите раздел</h3>
               <div class="product-list" id="product-list"></div>
             `;
             renderProducts(mainSections, 'home');
@@ -243,6 +243,29 @@ button:hover {
     // Обновление времени
     setInterval(showCurrentTime, 1000);
     showCurrentTime();
+
+    function showCurrentTime() {
+  const now = new Date();
+  
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+
+  const currentTime = `${hours}:${minutes}:${seconds}`;
+  const currentDate = `${day}.${month}.${year}`;
+
+  // Обновление времени и даты
+  document.getElementById('clock').textContent = ` ${currentTime} ${currentDate}`;
+}
+
+// Обновление времени и даты
+setInterval(showCurrentTime, 1000);
+showCurrentTime();
+
   </script>
 
   <style>
@@ -276,13 +299,14 @@ button:hover {
     { title: 'Аккаунты', target: 'accounts' },
     { title: 'Подписки', target: 'subscriptions' },
     { title: '🔒Временно недоступно🔒', target: null },
-    { title: '🔒Временно недоступно🔒', target: null }
+    { title: '🔒Временно недоступно🔒', target: null },
+    { title: 'Техническая поддержка', target: null }
   ];
 
   const virtualNumbers = [
     {
       title: 'Виртуальный номер для России +7 912 345 67 89',
-      description: 'Виртуальный номер для получения СМС на территории России.',
+      description: 'Виртуальный номер для получения СМС',
       price: '55RUB',
       image: 'path_to_image_1.jpg',
       country: 'Россия'
@@ -300,6 +324,13 @@ button:hover {
       price: '60RUB',
       image: 'path_to_image_3.jpg',
       country: 'Кения'
+    },
+    {
+      title: 'Виртуальный номер +358 40 2424 568',
+      description: 'Виртуальный номер для получения СМС.',
+      price: '--RUB',
+      image: 'path_to_image_3.jpg',
+      country: 'Финляндия'
     }
   ];
 
@@ -312,8 +343,7 @@ button:hover {
   const subscriptions = [
   {
       title: 'Подписка',
-      description: '--',
-      price: '--RUB',
+      price: '--RUB'
     }
   ];
 
@@ -470,7 +500,7 @@ button:hover {
           ${userInfo}
           <h2>Главная страница</h2>
           <p>Добро пожаловать на главную страницу!</p>
-          <h3>Выберите раздел товаров</h3>
+          <h3>Выберите раздел</h3>
           <div class="product-list" id="product-list"></div>
         `;
         renderProducts(mainSections, 'home');
