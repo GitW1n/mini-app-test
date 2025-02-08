@@ -1,5 +1,6 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram.ext import MessageHandler, filters
 from dotenv import load_dotenv
 import os
 
@@ -15,7 +16,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
         [InlineKeyboardButton("Перейти в MiniApp", web_app=WebAppInfo(url='https://gitw1n.github.io/mini-app-test/'))]
     ]
-
     image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\docs\images\logo.jpg'
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -50,15 +50,15 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(response)
 
 # Обработчик неизвестных команд
-async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Неизвестная команда. Используйте /start для начала.")
+async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("Извините, я не понимаю эту команду.")
 
 # Основная функция для запуска бота
 def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button))
     application.add_handler(CommandHandler("buy_1", buy))
-    application.add_handler(CommandHandler(None, unknown))  # Для неизвестных команд
+    application.add_handler(MessageHandler(filters.COMMAND, unknown))  # Обработка неизвестных команд
 
     application.run_polling()
 
