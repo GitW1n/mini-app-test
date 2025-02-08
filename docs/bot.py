@@ -27,6 +27,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     keyboard = [
         [InlineKeyboardButton("Перейти в MiniApp", web_app=WebAppInfo(url='https://gitw1n.github.io/mini-app-test/'))]
+    [InlineKeyboardButton("Проверить баланс (Можно по команде /balance)", callback_data='check_balance')]
     ]
     image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\docs\images\logo.jpg'
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -49,6 +50,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     if choice == 'number_1':
         response = "Вы выбрали Виртуальный номер 1. Цена: 10$. Для покупки напишите /buy_1."
+    elif choice == 'check_balance':
+        response = f"Ваш текущий баланс: 💰 {balance}₽"
     else:
         response = "Неизвестный выбор."
 
