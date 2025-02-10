@@ -52,18 +52,21 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     balance = user_balances[user_id]
 
     keyboard = [
-        [InlineKeyboardButton("Перейти в MiniApp", web_app="https://gitw1n.github.io/mini-app-test/")],
+        [InlineKeyboardButton("Перейти в MiniApp", web_app={"url": "https://gitw1n.github.io/mini-app-test/"})],
         [InlineKeyboardButton("Проверить баланс (Можно по команде /balance)", callback_data='check_balance')]
     ]
     
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    caption = f'Добро пожаловать, {username}!\nВаш текущий баланс: {balance}₽'
+    text = f'Добро пожаловать, {username}!\nВаш текущий баланс: {balance}₽'
 
     await update.message.reply_text(
-        caption=caption,
+        text=text,
         reply_markup=reply_markup
     )
+
+
+
 
 # Функция для обработки нажатия на кнопки
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -87,7 +90,29 @@ async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     balance = user_balances.get(user_id, 0)
     await update.message.reply_text(f"Ваш текущий баланс: 💰 {balance}₽")
 
-# Обработчик неизвестных команд
+# Добавляем защиту для команд, доступных только администратору
+ADMIN_USER_ID = 1024171288  # Замените на ваш Telegram ID
+
+async def users(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    
+    if user_id != ADMIN_USER_ID:
+        await update.message.reply_text("У вас нет прав для выполнения этой команды.")
+        return
+    
+    if not user_balances:
+        await update.message.reply_text("Нет пользователей.")
+        return
+
+    # Составляем список пользователей
+    users_list = "\n".join([f"User ID: {user_id}, Balance: {balance}₽" 
+                            for user_id, balance in user_balances.items()])
+    
+    await update.message.reply_text(f"Список пользователей:\n{users_list}")
+
+application.add_handler(CommandHandler("users", users))
+
+# Функция для обработки неизвестных команд
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Извините, я не понимаю эту команду.")
 
@@ -112,3 +137,4 @@ if __name__ == "__main__":
 
     # Запуск Telegram бота
     main()
+ч

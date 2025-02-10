@@ -198,6 +198,15 @@ button:hover {
             `;
             renderProducts(mainSections, 'home');
             break;
+            
+            case 'subscriptions':
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Подписки</h2>
+        <div class="product-list" id="product-list"></div>
+      `;
+      renderProducts(subscriptions, 'subscriptions');  // Добавление подписок
+      break;
     
           // Другие случаи
           default:
@@ -342,10 +351,18 @@ showCurrentTime();
 
   const subscriptions = [
   {
-      title: 'Подписка',
+      title: '🔒Не выставлен🔒',
       price: '--RUB'
-    }
-  ];
+  },
+  {
+      title: '🔒Не выставлен🔒',
+      price: '--RUB'
+  },
+  {
+      title: '🔒Не выставлен🔒',
+      price: '--RUB'
+  }
+];
 
   let cart = [];
 
@@ -375,9 +392,11 @@ showCurrentTime();
         alert(`${product.title} добавлен в корзину!`);
       });
     }
+    
 
     productList.appendChild(item);
   });
+  
 }
 
 
@@ -411,7 +430,6 @@ showCurrentTime();
   function addBackButton(content) {
   console.log("addBackButton вызывается");
   
-  // Создание кнопки
   const backButton = document.createElement('button');
   backButton.textContent = 'Отменить оформление';
 
@@ -423,16 +441,14 @@ showCurrentTime();
   backButton.style.border = 'none';
   backButton.style.borderRadius = '5px';
   backButton.style.cursor = 'pointer';
-  
-  // Обработчик события нажатия
+
   backButton.onclick = function () {
-    // Переход на главную страницу или возврат к корзине, зависит от логики
-    changeContent('home');  // Здесь можно использовать 'cart', если вы хотите возврат в корзину
+    changeContent('home');  // Вернуть на главную страницу
   };
 
-  // Вставка кнопки в начало блока контента
-  content.insertBefore(backButton, content.firstChild);
+  content.appendChild(backButton);  // Добавляем кнопку в конец контента
 }
+
 
 
 
@@ -576,6 +592,15 @@ showCurrentTime();
           <div class="product-list" id="product-list"></div>
         `;
         renderProducts(accounts, 'accounts');
+        break;
+      
+        case 'subscriptions':
+        content.innerHTML = `
+          ${userInfo}
+          <h2>Подписки</h2>
+          <div class="product-list" id="product-list"></div>
+        `;
+        renderProducts(subscriptions, 'subscriptions');  // Добавление подписок
         break;
 
       case 'cart':
