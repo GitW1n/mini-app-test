@@ -444,7 +444,7 @@ showCurrentTime();
       const description = "Оплата заказа №" + orderId;
 
       // Данные для QR-кода в формате СБП
-      const qrData = `ST00012|Name=ИП Иванов Иван|PersonalAcc=40802810000000000001|BankName=Тинькофф|BIC=044525974|PayeeINN=1234567890|Purpose=${description}|Sum=${amount}`;
+      const qrData = `ST00012|Name=ИП Иванов Иван|PersonalAcc=40802810000000000001|BankName=Тинькофф|BIC=044525974|PayeeINN=1234567890|Purpose=Перевод|Sum=${amount}`;
 
       // Генерация QR-кода через внешний API
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
@@ -671,6 +671,47 @@ if (user && user.photo_url) {
   document.getElementById('profile-picture').src = user.photo_url;
 }
 
+// Функция для извлечения параметров из URL
+function getQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get('user_id');
+  const balance = params.get('balance');
+  return { userId, balance };
+}
+
+// Функция для обновления UI с балансом
+function updateBalance(balance) {
+  const balanceElement = document.getElementById('balance');
+  balanceElement.textContent = `Ваш текущий баланс: 💰 ${balance}₽`;
+}
+
+// Когда веб-страница загружена, извлекаем параметры и обновляем UI
+document.addEventListener('DOMContentLoaded', () => {
+  const { userId, balance } = getQueryParams();
+  if (balance !== null) {
+    updateBalance(balance);
+  }
+});
+
+// Функция для обновления баланса через API
+async function updateBalanceAPI(userId, newBalance) {
+  const response = await fetch('http://127.0.0.1:8000/update_balance', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ user_id: userId, balance: newBalance }),  // Передаем данные как JSON
+  });
+
+  if (!response.ok) {
+    // Если запрос не успешен
+    console.error('Ошибка при обновлении баланса');
+    return;
+  }
+
+  const data = await response.json();
+  return data;  // Ответ от сервера, например, с новым балансом
+}
 
 </script>
   <style>

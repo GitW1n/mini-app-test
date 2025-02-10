@@ -1,19 +1,44 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-from telegram.ext import MessageHandler, filters
-from telegram import InputMediaPhoto
+from fastapi import FastAPI
+from pydantic import BaseModel
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 from dotenv import load_dotenv
 import os
+import uvicorn
+from threading import Thread
 
 # Загружаем переменные окружения для токена бота
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 
-# Инициализация приложения
-application = Application.builder().token(TOKEN).build()
+# Инициализация приложения FastAPI
+app = FastAPI()
 
-# 🗂️ Словарь для хранения баланса пользователей
+# Словарь для хранения баланса пользователей
 user_balances = {}
+
+# Модель для обновления баланса
+class BalanceUpdate(BaseModel):
+    user_id: int
+    balance: int
+
+# Функция для сохранения баланса (заглушка для примера)
+def save_user_balances(balances):
+    pass
+
+@app.post("/update_balance")
+async def update_balance(update: BalanceUpdate):
+    user_id = update.user_id
+    new_balance = update.balance
+
+    # Обновляем баланс пользователя
+    user_balances[user_id] = new_balance
+    save_user_balances(user_balances)  # Сохраняем данные
+
+    return {"status": "success", "new_balance": new_balance}
+
+# Инициализация приложения Telegram
+application = Application.builder().token(TOKEN).build()
 
 # Функция для отправки стартового сообщения с кнопками
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -27,17 +52,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     balance = user_balances[user_id]
 
     keyboard = [
-        [InlineKeyboardButton("Перейти в MiniApp", web_app=WebAppInfo(url='https://gitw1n.github.io/mini-app-test/'))],
+        [InlineKeyboardButton("Перейти в MiniApp", web_app="https://gitw1n.github.io/mini-app-test/")],
         [InlineKeyboardButton("Проверить баланс (Можно по команде /balance)", callback_data='check_balance')]
     ]
-    image_path = r'C:\Users\micro\VSCodeProjects\Python_cybersec_tests\Telegram_Mini_Apps\docs\images\logo.jpg'
+    
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    # 👤 Отображаем имя пользователя и баланс
-    caption = f'Добро пожаловать, {username}!\nВойдите в приложение для продолжения:'
+    caption = f'Добро пожаловать, {username}!\nВаш текущий баланс: {balance}₽'
 
-    await update.message.reply_photo(
-        photo=open(image_path, 'rb'),
+    await update.message.reply_text(
         caption=caption,
         reply_markup=reply_markup
     )
@@ -45,7 +68,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 # Функция для обработки нажатия на кнопки
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
-    await query.answer()  # Подтверждаем нажатие кнопки
+    await query.answer()
 
     choice = query.data
 
@@ -56,30 +79,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     else:
         response = "Неизвестный выбор."
 
-    # Если сообщение содержит изображение, используем edit_message_media
-    if query.message.photo:
-        # Используем InputMediaPhoto для добавления caption
-        media = InputMediaPhoto(media=query.message.photo[0].file_id, caption=response)
-        await query.edit_message_media(media=media)
-    else:
-        await query.edit_message_text(text=response)
-
-# Функция для обработки покупки
-async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user_id = update.effective_user.id
-    user_message = update.message.text
-
-    if user_message == '/buy_1':
-        # Проверяем, хватает ли баланса
-        if user_balances.get(user_id, 0) >= 10:
-            user_balances[user_id] -= 10  # Списываем 10₽
-            response = "Вы успешно приобрели Виртуальный номер 1. Подробности на почте."
-        else:
-            response = "Недостаточно средств на балансе. Пополните баланс, чтобы совершить покупку."
-    else:
-        response = "Для покупки выберите номер через кнопки."
-
-    await update.message.reply_text(response)
+    await query.edit_message_text(text=response)
 
 # 📥 Команда для проверки баланса
 async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -96,11 +96,19 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("balance", balance))  # Команда для просмотра баланса
     application.add_handler(CallbackQueryHandler(button))
-    application.add_handler(CommandHandler("buy_1", buy))
     application.add_handler(MessageHandler(filters.COMMAND, unknown))  # Обработка неизвестных команд
 
     application.run_polling()
 
-# Запуск бота
-if __name__ == '__main__':
+# Функция для запуска FastAPI сервера
+def run_fastapi():
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# Запуск бота и FastAPI в разных потоках
+if __name__ == "__main__":
+    # Запуск FastAPI сервера в отдельном потоке
+    thread = Thread(target=run_fastapi)
+    thread.start()
+
+    # Запуск Telegram бота
     main()
