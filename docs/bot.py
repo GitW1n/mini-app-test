@@ -8,6 +8,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Cont
 from dotenv import load_dotenv
 import subprocess
 import uvicorn
+from datetime import datetime
 
 # Загружаем переменные окружения для токена бота
 load_dotenv()
@@ -15,13 +16,14 @@ TOKEN = os.getenv("BOT_TOKEN")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
-ACSESS_TOKEN = f'https://yoomoney.ru/oauth/authorize?client_id={CLIENT_ID}&redirect_uri=https://gitw1n.github.io/mini-app-test/&response_type=code'
 
 # Инициализация приложения FastAPI
 app = FastAPI()
 
 # Словарь для хранения баланса пользователей
 user_balances = {}
+
+current_time = datetime.now()
 
 # Модель для обновления баланса
 class BalanceUpdate(BaseModel):
@@ -58,10 +60,17 @@ async def update_balance(update: BalanceUpdate):
 # Инициализация приложения Telegram
 application = Application.builder().token(TOKEN).build()
 
+user_last_start = {}  # Словарь для хранения времени последнего старта для каждого пользователя
+
+
 # Функция для отправки стартового сообщения с кнопками
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     username = update.effective_user.first_name
+
+    user_last_start[user_id] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Записываем время последнего старта
+    last_start = user_last_start.get(user_id, "Неизвестно")
+
 
     # Инициализация баланса, если пользователь запускает впервые
     if user_id not in user_balances:
@@ -147,6 +156,58 @@ async def add_balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     except (IndexError, ValueError):
         await update.message.reply_text("Пожалуйста, используйте команду в формате: /add_balance <сумма>")
 
+
+# current_time = datetime.now() находится выше на первых строках, примерно 20-40 строка
+
+async def time(update: Update , context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+
+
+    await update.message.reply_text(f"Текущее время:{current_time}")
+
+ 
+async def security(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id  # Получаем ID пользователя
+
+    # Получаем время последнего старта для данного пользователя
+    last_start = user_last_start.get(user_id, "Неизвестно")
+
+    # Отправляем сообщение с данными пользователя и клавиатурой
+    await update.message.reply_text(f"""
+    Безопасность 🛡️
+    Ваш ID: {user_id}
+    Последний вход: {last_start}
+    """)
+
+    # Создание клавиатуры с кнопками
+    security_keyboard = [
+        [InlineKeyboardButton("Личная Информация 🛡️", callback_data='security')],
+        [InlineKeyboardButton(f"Последний вход 🛡️: {last_start}", callback_data='last_start')]
+    ]
+    
+    reply_markup = InlineKeyboardMarkup(security_keyboard)
+    await update.message.reply_text("Выберите опцию:", reply_markup=reply_markup)
+
+
+async def settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id  # Получаем ID пользователя
+
+    # Отправляем сообщение с настройками
+    await update.message.reply_text(f"""
+    Настройки ⚙️
+    Ваш ID: {user_id}
+    """)
+
+    # Клавиатура с настройками
+    settings_keyboard = [
+        [InlineKeyboardButton("Перейти в MiniApp для настройки конфигурации стиля", web_app={"url": "https://gitw1n.github.io/mini-app-test/"})],
+        [InlineKeyboardButton("Безопасность 🛡️", callback_data='security')]
+    ]
+    
+    reply_markup = InlineKeyboardMarkup(settings_keyboard)
+    await update.message.reply_text("Выберите настройку:", reply_markup=reply_markup)
+
+
 # 📥 Команда для выполнения ping
 async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
@@ -168,84 +229,6 @@ async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 # Регистрация команды
 application.add_handler(CommandHandler("ping", ping))
-import httpx
-
-client_id = CLIENT_ID
-client_secret = CLIENT_SECRET
-redirect_uri = REDIRECT_URI
-
-async def get_access_token(auth_code):
-    url = "https://yoomoney.ru/oauth/token"
-    
-    data = {
-        "client_id": client_id,
-        "client_secret": client_secret,
-        "redirect_uri": redirect_uri,
-        "code": auth_code,
-        "grant_type": "authorization_code"
-    }
-
-    async with httpx.AsyncClient() as client:
-        response = await client.post(url, data=data)
-
-    if response.status_code == 200:
-        result = response.json()
-        access_token = result.get('access_token')
-        refresh_token = result.get('refresh_token')
-        return access_token, refresh_token
-    else:
-        return None, None
-
-async def get_user_info(access_token):
-    url = "https://yoomoney.ru/api/account-info"
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=headers)
-
-    if response.status_code == 200:
-        return response.json()  # Данные о пользователе
-    else:
-        return None
-
-# Функция для создания платежа
-async def create_payment_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user_id = update.effective_user.id
-
-    try:
-        # Проверяем, что аргументов достаточно (не менее двух)
-        if len(context.args) < 2:
-            await update.message.reply_text("Пожалуйста, укажите сумму и описание.\nПример: /create_payment 100 коментарий")
-            return
-
-        # Извлекаем сумму и описание из аргументов
-        amount = float(context.args[0])  # Сумма - первый аргумент
-        description = " ".join(context.args[1:])  # Описание - оставшиеся аргументы
-
-        # Проверка суммы на положительность
-        if amount <= 0:
-            await update.message.reply_text("Сумма должна быть больше 0.")
-            return
-
-        # Ваш токен доступа
-        access_token = ACSESS_TOKEN  # Замените на реальный токен
-
-        # Создаем платеж (функция create_payment)
-        payment_url = await create_payment_command(amount, description)
-
-        if payment_url:
-            await update.message.reply_text(f"Перейдите по ссылке для оплаты: {payment_url}")
-        else:
-            await update.message.reply_text("Произошла ошибка при создании платежа.")
-
-    except (IndexError, ValueError):
-        await update.message.reply_text("Пожалуйста, используйте команду в формате: /create_payment <сумма> <описание>")
-
-
-
-
 
 # Функция для обработки неизвестных команд
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -256,8 +239,10 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("balance", balance))  # Команда для просмотра баланса
     application.add_handler(CallbackQueryHandler(button))
-    application.add_handler(CommandHandler("add_balance", add_balance))
-    application.add_handler(CommandHandler("create_payment", create_payment_command)) 
+    application.add_handler(CommandHandler("add_balance", add_balance)) 
+    application.add_handler(CommandHandler("time", time)) 
+    application.add_handler(CommandHandler("security", security)) 
+    application.add_handler(CommandHandler("settings", settings)) 
     application.add_handler(MessageHandler(filters.COMMAND, unknown))  # Обработка неизвестных команд
 
     application.run_polling()
@@ -276,21 +261,6 @@ async def add_balance_api(update: BalanceUpdate):
     save_user_balances(user_balances)  # Сохраняем данные
 
     return {"status": "success", "new_balance": user_balances[user_id]}
-
-@app.post("/payment_notification")
-async def payment_notification(data: dict):
-    payment_id = data.get("payment_id")
-    status = data.get("status")
-    user_id = data.get("metadata", {}).get("user_id")
-    amount = data.get("amount", {}).get("value")
-
-    if status == "succeeded" and user_id and amount:
-        user_balances[int(user_id)] = user_balances.get(int(user_id), 0) + int(amount)
-        save_user_balances(user_balances)  # Сохраняем баланс
-        return {"status": "success", "message": f"Баланс пользователя {user_id} обновлен."}
-    
-    return {"status": "error", "message": "Некорректные данные или неудачный платёж."}
-
 
 # Функция для запуска FastAPI сервера
 def run_fastapi():
