@@ -34,6 +34,8 @@ user_balances = {}
 
 current_time = datetime.now()
 
+
+
 # Модель для обновления баланса
 class BalanceUpdate(BaseModel):
     user_id: int
@@ -124,12 +126,12 @@ async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Ваш текущий баланс: 💰 {balance}₽")
 
 # Защита для команд, доступных только администратору
-ADMIN_USER_ID = 1024171288  # Замените на ваш Telegram ID
+OWNER_USER_ID = 1024171288  # Замените на ваш Telegram ID
 
 async def users(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     
-    if user_id != ADMIN_USER_ID:
+    if user_id != OWNER_USER_ID:
         await update.message.reply_text("У вас нет прав для выполнения этой команды.")
         return
     
@@ -174,8 +176,22 @@ async def time(update: Update , context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await update.message.reply_text(f"Текущее время:{current_time}")
 
- 
+ADMIN_USER_ID = 0
+
+
+
+user_rights = "Неопределенны"
+
+
+
 async def security(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    username = update.effective_user.first_name 
+
+    if user_id == ADMIN_USER_ID: user_rights = "Администратор"
+    elif user_id == OWNER_USER_ID: user_rights = "Владелец"
+    else: user_rights = "Пользователь"
+
     user_id = update.effective_user.id  # Получаем ID пользователя
 
     # Получаем время последнего старта для данного пользователя
@@ -190,8 +206,14 @@ async def security(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # Создание клавиатуры с кнопками
     security_keyboard = [
-        [InlineKeyboardButton("Личная Информация 🛡️", callback_data='security')],
-        [InlineKeyboardButton(f"Последний вход 🛡️: {last_start}", callback_data='last_start')]
+        [InlineKeyboardButton("Личная Информация 🛡️", callback_data=f'''
+Ваш ID:{user_id}
+Ваш Username: {username}
+Баланс: {balance}
+Права доступа: {user_rights}
+''')],
+        [InlineKeyboardButton(f"Последний вход 🛡️: {last_start}", callback_data='last_start')],
+        [InlineKeyboardButton(f"")]
     ]
     
     reply_markup = InlineKeyboardMarkup(security_keyboard)
@@ -221,7 +243,7 @@ async def settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
 
-    if user_id != ADMIN_USER_ID:
+    if user_id != OWNER_USER_ID:
         await update.message.reply_text("У вас нет прав для выполнения этой команды.")
         return
 
