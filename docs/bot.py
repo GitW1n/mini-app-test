@@ -9,8 +9,17 @@ from dotenv import load_dotenv
 import subprocess
 import uvicorn
 from datetime import datetime
+import logging
 
-# Загружаем переменные окружения для токена бота
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+logger.info("Бот запущен")
+
+
+
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 CLIENT_ID = os.getenv("CLIENT_ID")
