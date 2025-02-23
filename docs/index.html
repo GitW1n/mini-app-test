@@ -8,15 +8,14 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <title>Mini App</title>
   <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
   <header class="header">
-    <h1>Telesim.tg</h1>
+    <button onclick="changeContent('settings')">⚙️</button>
     
     <div class="clock" id="clock"></div>
   </header>
-  <div class="header" id="adm">Важные функции сейчас в разработке! Чтобы отменить заказ перезагрузитесь.</div>
+  <div class="header" id="adm">Чтобы отменить заказ перезагрузитесь.</div>
   
   
   <div class="terms-link"> 
@@ -43,6 +42,36 @@
         changeContent('home');  // Возвращаем пользователя на главную страницу
       }
     
+      function renderBalance() {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info').outerHTML;
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Баланс</h2>
+        <p>Текущий баланс: ${balanceInfo.balance} ${balanceInfo.selectedCurrency}</p>
+        <label for="currency">Выберите валюту:</label>
+        <select id="currency" onchange="changeCurrency(event)">
+          ${balanceInfo.currencies.map(currency => `<option value="${currency}" ${currency === balanceInfo.selectedCurrency ? 'selected' : ''}>${currency}</option>`).join('')}
+        </select>
+      `;
+    }
+
+    function changeCurrency(event) {
+      balanceInfo.selectedCurrency = event.target.value;
+      renderBalance();
+    }
+
+    function renderVendors() {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info').outerHTML;
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Продавцы</h2>
+        <div class="product-list" id="product-list"></div>
+      `;
+      renderProducts(vendors, 'vendors');
+    }
+
       // Функция для изменения содержимого страницы
       function changeContent(page) {
         const content = document.getElementById('content');
@@ -68,6 +97,22 @@
       `;
       renderProducts(subscriptions, 'subscriptions');  // Добавление подписок
       break;
+    
+          case 'settings':
+          content.innerHTML = `
+        ${userInfo}
+        <h2>Настройки</h2>
+      `;
+      renderProducts(settings, 'settings');
+      break;
+
+      case 'balance':
+          renderBalance();
+          break;
+
+        case 'vendors':
+          renderVendors();
+          break;
     
           // Другие случаи
           default:
@@ -144,8 +189,8 @@ showCurrentTime();
     { title: 'Виртуальные номера', target: 'virtual-numbers' },
     { title: 'Аккаунты', target: 'accounts' },
     { title: 'Подписки', target: 'subscriptions' },
-    { title: '🔒Временно недоступно🔒', target: null },
-    { title: '🔒Временно недоступно🔒', target: null },
+    { title: 'Баланс', target: 'balance' },
+    { title: 'Продавцы', target: 'vendors' },
     { title: 'Техническая поддержка', target: null }
   ];
 
@@ -200,6 +245,21 @@ showCurrentTime();
       price: '--RUB'
   }
 ];
+
+  const settings = [
+    {title:'Изменить аватар'}
+  ]
+
+  const balanceInfo = {
+      balance: 1000, // Пример баланса
+      currencies: ['RUB', 'USD', 'EUR'], // Поддерживаемые валюты
+      selectedCurrency: 'RUB' // Текущая валюта
+    };
+
+    const vendors = [
+      { title: 'Товары для продажи' },
+      { title: 'Управление заказами' }
+    ];
 
   let cart = [];
 
@@ -343,6 +403,36 @@ showCurrentTime();
     `;
   }
 
+  function renderBalance() {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info').outerHTML;
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Баланс</h2>
+        <p>Текущий баланс: ${balanceInfo.balance} ${balanceInfo.selectedCurrency}</p>
+        <label for="currency">Выберите валюту:</label>
+        <select id="currency" onchange="changeCurrency(event)">
+          ${balanceInfo.currencies.map(currency => `<option value="${currency}" ${currency === balanceInfo.selectedCurrency ? 'selected' : ''}>${currency}</option>`).join('')}
+        </select>
+      `;
+    }
+
+    function changeCurrency(event) {
+      balanceInfo.selectedCurrency = event.target.value;
+      renderBalance();
+    }
+
+    function renderVendors() {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info').outerHTML;
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Управление товарами</h2>
+        <div class="product-list" id="product-list"></div>
+      `;
+      renderProducts(vendors, 'vendors');
+    }
+
   function changeContent(page) {
     const content = document.getElementById('content');
     const userInfo = document.querySelector('.user-info').outerHTML;
@@ -412,6 +502,14 @@ showCurrentTime();
           <button onclick="changeContent('home')">Вернуться на главную</button>
         `;
         break;
+
+        case 'balance':
+          renderBalance();
+          break;
+
+        case 'vendors':
+          renderVendors();
+          break;
 
       case 'virtual-numbers':
         content.innerHTML = `

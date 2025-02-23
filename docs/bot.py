@@ -185,14 +185,12 @@ user_rights = "Неопределенны"
 
 
 async def security(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-
+    user_id = update.effective_user.id
     username = update.effective_user.first_name 
 
     if user_id == ADMIN_USER_ID: user_rights = "Администратор"
     elif user_id == OWNER_USER_ID: user_rights = "Владелец"
     else: user_rights = "Пользователь"
-
-    user_id = update.effective_user.id  # Получаем ID пользователя
 
     # Получаем время последнего старта для данного пользователя
     last_start = user_last_start.get(user_id, "Неизвестно")
