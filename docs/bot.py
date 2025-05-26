@@ -119,7 +119,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await query.edit_message_text(text=response)
 
-# 📥 Команда для проверки баланса
+# Команда для проверки баланса
 async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     balance = user_balances.get(user_id, 0)
@@ -147,7 +147,7 @@ async def users(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 application.add_handler(CommandHandler("users", users))
 
-# 📥 Команда для пополнения баланса
+# Команда для пополнения баланса
 async def add_balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
 
