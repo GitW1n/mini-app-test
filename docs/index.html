@@ -439,6 +439,37 @@ showCurrentTime();
       renderProducts(vendors, 'vendors');
     }
 
+    function renderSupportItems(items) {
+  const productList = document.getElementById('product-list');
+  productList.innerHTML = '';
+
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'support-item';
+    div.textContent = item.title;
+    div.addEventListener('click', () => {
+      alert(`Обращение в поддержку: ${item.title}`);
+      // Здесь может быть переход в чат, форма обратной связи и т.д.
+    });
+    productList.appendChild(div);
+  });
+}
+
+function renderSupport() {
+  const content = document.getElementById('content');
+  const userInfoElement = document.querySelector('.user-info');
+  const userInfo = userInfoElement ? userInfoElement.outerHTML : '';
+  
+  content.innerHTML = `
+    ${userInfo}
+    <h2>Техническая поддержка</h2>
+    <div class="product-list" id="product-list"></div>
+  `;
+  
+  renderSupportItems(support);
+}
+
+
   function changeContent(page) {
     const content = document.getElementById('content');
     const userInfo = document.querySelector('.user-info').outerHTML;
