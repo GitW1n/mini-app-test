@@ -286,9 +286,8 @@ showCurrentTime();
       products.forEach(product => {
         const item = document.createElement('div');
         item.className = 'product-item';
-        // Если есть изображение, показываем img
         const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
-        item.innerHTML = `${imgHtml}<span>${product.title}</span>${product.price ? `<span style="margin-left:auto;">Цена: ${product.price}</span>` : ''}`;
+        item.innerHTML = `${imgHtml}<span>${product.title}</span>${product.price ? `<span style="margin-left:auto;">${product.price}</span>` : ''}`;
         if (section === 'home' && product.target) {
           item.addEventListener('click', () => changeContent(product.target));
         } else {
