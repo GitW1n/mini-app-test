@@ -251,9 +251,15 @@ showCurrentTime();
       { title: '---', price: '--₽', image: 'https://ir-3.ozone.ru/s3/multimedia-8/wc100/6853922432.jpg', stock:0 }
     ];
       // Регион и районы
-  const regionDistricts = {
-    'Москва': ['Новогиреево (ВАО)']
+  const regionDistricts = 
+    {
+      'Москва': {
+        'ВАО': ['Новогиреево']
+      },
+      'Владимирская область': { ['Петушинский':'Гнездино','Островищи','Килекшино','Ветчи','Красный луч','Сосновый бор']
+      }
     };
+    
 
   const subscriptions = [
   {
@@ -299,14 +305,8 @@ showCurrentTime();
         const item = document.createElement('div');
         item.className = 'product-item';
         const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
-        // Отображение названия, цены и наличия
-        const stockHtml = product.stock !== undefined ? `<span class="stock">Шт: ${product.stock}</span>` : '';
-        item.innerHTML = `
-          ${imgHtml}
-          <span>${product.title}</span>
-          ${product.price ? `<span style="margin-left:auto;">${product.price}</span>` : ''}
-          ${stockHtml}
-        `;
+        const stockHtml = product.stock !== undefined ? `<span class="stock">В наличии: ${product.stock}</span>` : '';
+        item.innerHTML = `${imgHtml}<span>${product.title}</span>${product.price ? `<span style="margin-left:auto;">${product.price}</span>` : ''}${stockHtml}`;
         if (section === 'home' && product.target) {
           item.addEventListener('click', () => changeContent(product.target));
         } else {
@@ -327,37 +327,61 @@ showCurrentTime();
 
        function onRegionChange(e) {
       const region = e.target.value;
+      const okrugSelect = document.getElementById('okrug');
+      const districtSelect = document.getElementById('district');
+      okrugSelect.innerHTML = '';
+      districtSelect.innerHTML = '';
+      Object.keys(regionData[region]).forEach(okrug => {
+        const opt = document.createElement('option'); opt.value = okrug; opt.textContent = okrug;
+        okrugSelect.appendChild(opt);
+      });
+      onOkrugChange({ target: okrugSelect });
+    }
+  
+  function onOkrugChange(e) {
+      const region = document.getElementById('region').value;
+      const okrug = e.target.value;
       const districtSelect = document.getElementById('district');
       districtSelect.innerHTML = '';
-      regionDistricts[region].forEach(dist => {
-        const opt = document.createElement('option');
-        opt.value = dist;
-        opt.textContent = dist;
+      regionData[region][okrug].forEach(dist => {
+        const opt = document.createElement('option'); opt.value = dist; opt.textContent = dist;
         districtSelect.appendChild(opt);
       });
+      renderFilteredProducts();
+    }
+
+    function onDistrictChange() {
+      renderFilteredProducts();
+    }
+
+    function renderFilteredProducts() {
+      const reg = document.getElementById('region').value;
+      const okr = document.getElementById('okrug').value;
+      const dist = document.getElementById('district').value;
+      const filtered = localMarketProducts.filter(p => p.region === reg && p.okrug === okr && p.district === dist);
+      renderProducts(filtered, 'local-market');
     }
   
   function renderLocalMarket() {
       const content = document.getElementById('content');
-      const userInfo = document.querySelector('.user-info') ? document.querySelector('.user-info').outerHTML : '';
       content.innerHTML = `
-        ${userInfo}
         <h2>Локальный рынок</h2>
         <div class="selectors">
           <label for="region">Регион:</label>
           <select id="region" onchange="onRegionChange(event)"></select>
+          <label for="okrug">Округ:</label>
+          <select id="okrug" onchange="onOkrugChange(event)"></select>
           <label for="district">Район:</label>
-          <select id="district"></select>
+          <select id="district" onchange="onDistrictChange()"></select>
         </div>
         <div class="product-list" id="product-list"></div>
       `;
       const regionSelect = document.getElementById('region');
-      Object.keys(regionDistricts).forEach(r => {
+      Object.keys(regionData).forEach(r => {
         const opt = document.createElement('option'); opt.value = r; opt.textContent = r;
         regionSelect.appendChild(opt);
       });
       onRegionChange({ target: regionSelect });
-      renderProducts(localMarketProducts, 'local-market');
     }
 
   function renderCart() {
