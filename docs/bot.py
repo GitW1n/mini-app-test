@@ -276,7 +276,7 @@ def main() -> None:
 
     application.run_polling()
 
-# API для пополнения баланса через FastAPI
+
 @app.post("/add_balance")
 async def add_balance_api(update: BalanceUpdate):
     user_id = update.user_id
@@ -285,19 +285,19 @@ async def add_balance_api(update: BalanceUpdate):
     if amount <= 0:
         return {"status": "error", "message": "Сумма должна быть больше 0."}
 
-    # Пополнение баланса
+    
     user_balances[user_id] = user_balances.get(user_id, 0) + amount
-    save_user_balances(user_balances)  # Сохраняем данные
+    save_user_balances(user_balances)
 
     return {"status": "success", "new_balance": user_balances[user_id]}
 
-# Функция для запуска FastAPI сервера
+
 def run_fastapi():
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
-# Запуск бота и FastAPI в разных потоках
+
 if __name__ == "__main__":
-    # Запуск FastAPI сервера в отдельном потоке
+    # Запуск сервера в отдельном потоке
     thread = Thread(target=run_fastapi)
     thread.start()
 
