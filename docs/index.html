@@ -238,6 +238,10 @@ showCurrentTime();
       { title: 'Свежие яблоки', price: '120₽', image: 'images/apples.jpg' },
       { title: 'Домашний хлеб', price: '80₽', image: 'images/bread.jpg' }
     ];
+      // Регион и районы
+  const regionDistricts = {
+    'Москва': ['Новогиреево (ВАО)']
+    };
 
   const subscriptions = [
   {
@@ -294,6 +298,43 @@ showCurrentTime();
       });
     }
 
+       function onRegionChange(e) {
+      const region = e.target.value;
+      const districtSelect = document.getElementById('district');
+      districtSelect.innerHTML = '';
+      regionDistricts[region].forEach(dist => {
+        const opt = document.createElement('option');
+        opt.value = dist;
+        opt.textContent = dist;
+        districtSelect.appendChild(opt);
+      });
+    }
+  
+  function renderLocalMarket() {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info') ? document.querySelector('.user-info').outerHTML : '';
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Локальный рынок</h2>
+        <div class="selectors">
+          <label for="region">Регион:</label>
+          <select id="region" onchange="onRegionChange(event)"></select>
+          <label for="district">Район:</label>
+          <select id="district"></select>
+        </div>
+        <div class="product-list" id="product-list"></div>
+      `;
+      // Заполняем селекты региона и района
+      const regionSelect = document.getElementById('region');
+      Object.keys(regionDistricts).forEach(r => {
+        const opt = document.createElement('option'); opt.value = r; opt.textContent = r;
+        regionSelect.appendChild(opt);
+      });
+      // Инициализация районов
+      onRegionChange({ target: regionSelect });
+      // Рендер товаров
+      renderProducts(localMarketProducts, 'local-market');
+    }
 
 
   function renderCart() {
@@ -505,10 +546,7 @@ showCurrentTime();
           renderBalance();
           break;
         
-         case 'local-market':
-          content.innerHTML = `${userInfo}<h2>Локальный рынок</h2><div class="product-list" id="product-list"></div>`;
-          renderProducts(localMarketProducts, 'local-market');
-          break;
+         case 'local-market': renderLocalMarket(); break;
 
         case 'vendors':
           renderVendors();
