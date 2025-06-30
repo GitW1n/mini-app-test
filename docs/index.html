@@ -292,7 +292,7 @@ showCurrentTime();
         item.className = 'product-item';
         const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
         // Отображение названия, цены и наличия
-        const stockHtml = product.stock !== undefined ? `<span class="stock">В наличии: ${product.stock}</span>` : '';
+        const stockHtml = product.stock !== undefined ? `<span class="stock">Шт: ${product.stock}</span>` : '';
         item.innerHTML = `
           ${imgHtml}
           <span>${product.title}</span>
