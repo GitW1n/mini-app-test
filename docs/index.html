@@ -234,13 +234,13 @@ showCurrentTime();
   ];
 
   const localMarketProducts = [
-      { title: '🔒Lit Energy Фейхоа🔒', price: '---₽', image: 'https://ir.ozone.ru/s3/multimedia-1-d/wc100/7647447937.jpg' },
-      { title: 'Coca-Cola без сахара в стекле 0,33 л', price: '166₽', image: 'https://ir-3.ozone.ru/s3/multimedia-1-j/wc100/7653741607.jpg' },
-      { title: 'Pepsi Cola 0,3л', price: '67₽', image: 'https://ir-3.ozone.ru/s3/multimedia-8/wc100/6853922432.jpg' },
-      { title: '7up напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-n/wc100/6914260319.jpg' },
-      { title: 'Sprite напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-9/wc100/6914260341.jpg' },
-      { title: 'Fanta напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-f/wc100/6914260311.jpg' },
-      { title: '---', price: '--₽', image: 'https://ir-3.ozone.ru/s3/multimedia-8/wc100/6853922432.jpg' }
+      { title: '🔒Lit Energy Фейхоа🔒', price: '---₽', image: 'https://ir.ozone.ru/s3/multimedia-1-d/wc100/7647447937.jpg', stock:0 },
+      { title: 'Coca-Cola без сахара в стекле 0,33 л', price: '166₽', image: 'https://ir-3.ozone.ru/s3/multimedia-1-j/wc100/7653741607.jpg', stock:0 },
+      { title: 'Pepsi Cola 0,3л', price: '67₽', image: 'https://ir-3.ozone.ru/s3/multimedia-8/wc100/6853922432.jpg', stock:0 },
+      { title: '7up напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-n/wc100/6914260319.jpg', stock:0 },
+      { title: 'Sprite напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-9/wc100/6914260341.jpg', stock:0 },
+      { title: 'Fanta напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-f/wc100/6914260311.jpg', stock:0 },
+      { title: '---', price: '--₽', image: 'https://ir-3.ozone.ru/s3/multimedia-8/wc100/6853922432.jpg', stock:0 }
     ];
       // Регион и районы
   const regionDistricts = {
@@ -291,11 +291,27 @@ showCurrentTime();
         const item = document.createElement('div');
         item.className = 'product-item';
         const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
-        item.innerHTML = `${imgHtml}<span>${product.title}</span>${product.price ? `<span style="margin-left:auto;">${product.price}</span>` : ''}`;
+        // Отображение названия, цены и наличия
+        const stockHtml = product.stock !== undefined ? `<span class="stock">В наличии: ${product.stock}</span>` : '';
+        item.innerHTML = `
+          ${imgHtml}
+          <span>${product.title}</span>
+          ${product.price ? `<span style="margin-left:auto;">${product.price}</span>` : ''}
+          ${stockHtml}
+        `;
         if (section === 'home' && product.target) {
           item.addEventListener('click', () => changeContent(product.target));
         } else {
-          item.addEventListener('click', () => { cart.push(product); alert(`${product.title} добавлен в корзину!`); });
+          item.addEventListener('click', () => {
+            if (product.stock > 0) {
+              cart.push(product);
+              product.stock--;
+              renderProducts(products, section);
+              alert(`${product.title} добавлен в корзину!`);
+            } else {
+              alert('Товара нет в наличии');
+            }
+          });
         }
         productList.appendChild(item);
       });
@@ -327,18 +343,14 @@ showCurrentTime();
         </div>
         <div class="product-list" id="product-list"></div>
       `;
-      // Заполняем селекты региона и района
       const regionSelect = document.getElementById('region');
       Object.keys(regionDistricts).forEach(r => {
         const opt = document.createElement('option'); opt.value = r; opt.textContent = r;
         regionSelect.appendChild(opt);
       });
-      // Инициализация районов
       onRegionChange({ target: regionSelect });
-      // Рендер товаров
       renderProducts(localMarketProducts, 'local-market');
     }
-
 
   function renderCart() {
     const content = document.getElementById('content');
