@@ -187,13 +187,14 @@ showCurrentTime();
 
 <script>
   const mainSections = [
-    { title: 'Виртуальные номера', target: 'virtual-numbers' },
-    { title: 'Аккаунты', target: 'accounts' },
-    { title: 'Подписки', target: 'subscriptions' },
-    { title: 'Баланс', target: 'balance' },
-    { title: 'Продавцы', target: 'vendors' },
-    { title: 'Техническая поддержка', target: 'support' }
-  ];
+      { title: 'Виртуальные номера', target: 'virtual-numbers' },
+      { title: 'Аккаунты', target: 'accounts' },
+      { title: 'Подписки', target: 'subscriptions' },
+      { title: 'Локальный рынок', target: 'local-market' },  // Новый раздел
+      { title: 'Баланс', target: 'balance' },
+      { title: 'Продавцы', target: 'vendors' },
+      { title: 'Техническая поддержка', target: 'support' }
+    ];
 
   const virtualNumbers = [
     {
@@ -231,6 +232,12 @@ showCurrentTime();
     { title: '🔒Не выставлен🔒' },
     { title: '🔒Не выставлен🔒' }
   ];
+
+  const localMarketProducts = [
+      { title: 'Мёд натуральный', price: '300₽', image: 'images/honey.jpg' },
+      { title: 'Свежие яблоки', price: '120₽', image: 'images/apples.jpg' },
+      { title: 'Домашний хлеб', price: '80₽', image: 'images/bread.jpg' }
+    ];
 
   const subscriptions = [
   {
@@ -270,37 +277,22 @@ showCurrentTime();
   let cart = [];
 
   function renderProducts(products, section) {
-  const productList = document.getElementById('product-list');
-  productList.innerHTML = '';
-
-  products.forEach(product => {
-    const item = document.createElement('div');
-    item.className = 'product-item';
-    item.innerHTML = `<span>${product.title}</span>${product.price ? `<span style="margin-left: auto;">Цена: ${product.price}</span>` : ''}`;
-
-    if (section === 'home') {
-      if (product.target) {
-        item.addEventListener('click', () => {
-          changeContent(product.target);
-        });
-      } else {
-        item.style.cursor = 'not-allowed';  // Устанавливаем стиль для неактивных разделов
-        item.addEventListener('click', () => {
-          alert('Секция недоступна');
-        });
-      }
-    } else {
-      item.addEventListener('click', function () {
-        cart.push(product);
-        alert(`${product.title} добавлен в корзину!`);
+      const productList = document.getElementById('product-list');
+      productList.innerHTML = '';
+      products.forEach(product => {
+        const item = document.createElement('div');
+        item.className = 'product-item';
+        // Если есть изображение, показываем img
+        const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
+        item.innerHTML = `${imgHtml}<span>${product.title}</span>${product.price ? `<span style="margin-left:auto;">Цена: ${product.price}</span>` : ''}`;
+        if (section === 'home' && product.target) {
+          item.addEventListener('click', () => changeContent(product.target));
+        } else {
+          item.addEventListener('click', () => { cart.push(product); alert(`${product.title} добавлен в корзину!`); });
+        }
+        productList.appendChild(item);
       });
     }
-    
-
-    productList.appendChild(item);
-  });
-  
-}
 
 
 
@@ -511,6 +503,11 @@ showCurrentTime();
 
         case 'balance':
           renderBalance();
+          break;
+        
+         case 'local-market':
+          content.innerHTML = `${userInfo}<h2>Локальный рынок</h2><div class="product-list" id="product-list"></div>`;
+          renderProducts(localMarketProducts, 'local-market');
           break;
 
         case 'vendors':
