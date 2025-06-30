@@ -240,36 +240,6 @@ function changeContent(page) {
       renderProducts(subscriptions, 'subscriptions');
       break;
 
-    case 'global':
-      content.innerHTML = `
-        ${userInfo}
-        <h2>Global</h2>
-
-        <h3>Виртуальные номера</h3>
-        <div class="product-list" id="global-virtual-numbers"></div>
-
-        <h3>Аккаунты</h3>
-        <div class="product-list" id="global-accounts"></div>
-
-        <h3>Подписки</h3>
-        <div class="product-list" id="global-subscriptions"></div>
-
-        <div style="display:none;" id="product-list"></div> <!-- временный контейнер -->
-      `;
-
-      // Рендерим виртуальные номера
-      renderProducts(virtualNumbers, 'virtual-numbers');
-      document.getElementById('global-virtual-numbers').innerHTML = document.getElementById('product-list').innerHTML;
-
-      // Рендерим аккаунты
-      renderProducts(accounts, 'accounts');
-      document.getElementById('global-accounts').innerHTML = document.getElementById('product-list').innerHTML;
-
-      // Рендерим подписки
-      renderProducts(subscriptions, 'subscriptions');
-      document.getElementById('global-subscriptions').innerHTML = document.getElementById('product-list').innerHTML;
-      break;
-
     case 'support':
       renderSupport();
       break;
