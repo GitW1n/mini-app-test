@@ -430,28 +430,7 @@ showCurrentTime();
       renderProducts(localMarketProducts, 'local-market');
     }
 
-    function renderSupplies(supplies, containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  container.innerHTML = '';
-
-  supplies.forEach(supply => {
-    const item = document.createElement('div');
-    item.className = 'product-item';
-
-    const imgHtml = supply.image
-      ? `<img src="${supply.image}" alt="${supply.title}" />`
-      : '';
-
-    item.innerHTML = `
-      ${imgHtml}
-      <span>${supply.title || 'Без названия'}</span>
-      <span class="supplier">${supply.supplier || 'Поставщик не указан'}</span>
-    `;
-
-    container.appendChild(item);
-  });
-}
+    
 
 
   function renderCart() {
@@ -589,6 +568,29 @@ showCurrentTime();
       renderProducts(vendors, 'vendors');
     }
 
+    function renderSupplies(supplies, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+
+  supplies.forEach(supply => {
+    const item = document.createElement('div');
+    item.className = 'product-item';
+
+    const imgHtml = supply.image
+      ? `<img src="${supply.image}" alt="${supply.title}" />`
+      : '';
+
+    item.innerHTML = `
+      ${imgHtml}
+      <span>${supply.title || 'Без названия'}</span>
+      <span class="supplier">${supply.supplier || 'Поставщик не указан'}</span>
+    `;
+
+    container.appendChild(item);
+  });
+}
+
   function changeContent(page) {
     const content = document.getElementById('content');
     const userInfo = document.querySelector('.user-info').outerHTML;
@@ -665,7 +667,7 @@ showCurrentTime();
         
          case 'local-market': renderLocalMarket(); break;
          case 'supplies':
-      renderSuppliesSection();
+      renderSupplies();
       break;
 
         case 'vendors':
