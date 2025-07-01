@@ -703,18 +703,29 @@ showCurrentTime();
       }, 5000);
     }
 
-    async function fetchProducts() {
-  const response = await fetch('https://b4e7-46-166-162-166.ngrok-free.app/api/products');
-  const data = await response.json();
-  return data;
+    async function fetchProducts(region, district) {
+  const params = new URLSearchParams();
+  if (region)   params.append('region', region);
+  if (district) params.append('district', district);
+
+  const response = await fetch(`${API_BASE_URL}/api/products?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error(`Ошибка загрузки продуктов: ${response.status}`);
+  }
+  return await response.json();
 }
 
-    async function addToCart(product) {
-  await fetch(`${API_BASE_URL}/api/cart`, {
+    async function addToCart(productId, quantity = 1) {
+  const response = await fetch(`${API_BASE_URL}/api/cart`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(product)
+    body: JSON.stringify({ productId, quantity })
   });
+  const result = await response.json();
+  if (!result.success) {
+    alert(`Не удалось добавить в корзину: ${result.message}`);
+  }
+  return result;
 }
   </script>
 
