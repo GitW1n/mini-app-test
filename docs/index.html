@@ -388,10 +388,10 @@ showCurrentTime();
   // Настройка селектов (как было):
   const regionSelect   = document.getElementById('region');
   const districtSelect = document.getElementById('district');
-  Object.keys(regionData).forEach(r => regionSelect.add(new Option(r, r)));
+  Object.keys(regionDistricts).forEach(r => regionSelect.add(new Option(r, r)));
   regionSelect.onchange = async () => {
     // при смене региона подгружаем районы:
-    const districts = regionData[regionSelect.value];
+    const districts = regionDistricts[regionSelect.value];
     districtSelect.innerHTML = '';
     districts.forEach(d => districtSelect.add(new Option(d, d)));
     // а потом сразу подгружаем товары:
