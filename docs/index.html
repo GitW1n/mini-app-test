@@ -319,37 +319,53 @@ showCurrentTime();
   let cart = [];
 
   function renderProducts(products, section) {
-      const productList = document.getElementById('product-list');
-      productList.innerHTML = '';
-      products.forEach(product => {
-        const item = document.createElement('div');
-        item.className = 'product-item';
-        const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
-        // Отображение названия, цены и наличия
-        const stockHtml = product.stock !== undefined ? `<span class="stock">Шт: ${product.stock}</span>` : '';
-        item.innerHTML = `
-          ${imgHtml}
-          <span>${product.title}</span>
-          ${product.price ? `<span style="margin-left:auto;">${product.price}</span>` : ''}
-          ${stockHtml}
-        `;
-        if (section === 'home' && product.target) {
-          item.addEventListener('click', () => changeContent(product.target));
+  const productList = document.getElementById('product-list');
+  productList.innerHTML = '';
+  products.forEach(product => {
+    const item = document.createElement('div');
+    item.className = 'product-item';
+    const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
+
+    // Показываем наличие только если это local-market
+    const stockHtml = section === 'local-market' && product.stock !== undefined
+      ? `<span class="stock">Шт: ${product.stock}</span>`
+      : '';
+
+    item.innerHTML = `
+      ${imgHtml}
+      <span>${product.title}</span>
+      ${product.price ? `<span style="margin-left:auto;">${product.price}</span>` : ''}
+      ${stockHtml}
+    `;
+
+    // Обработка клика
+    if (section === 'home' && product.target) {
+      // Клик по карточке на главной — переход в другую секцию
+      item.addEventListener('click', () => changeContent(product.target));
+    } else if (section === 'local-market') {
+      // Только в local-market — проверяем наличие на складе
+      item.addEventListener('click', () => {
+        if (product.stock > 0) {
+          cart.push(product);
+          product.stock--;
+          renderProducts(products, section);
+          alert(`${product.title} добавлен в корзину!`);
         } else {
-          item.addEventListener('click', () => {
-            if (product.stock > 0) {
-              cart.push(product);
-              product.stock--;
-              renderProducts(products, section);
-              alert(`${product.title} добавлен в корзину!`);
-            } else {
-              alert('Товара нет в наличии');
-            }
-          });
+          alert('Товара нет в наличии');
         }
-        productList.appendChild(item);
+      });
+    } else {
+      // В остальных секциях (не home, не local-market) — просто добавляем в корзину без проверки
+      item.addEventListener('click', () => {
+        cart.push(product);
+        alert(`${product.title} добавлен в корзину!`);
       });
     }
+
+    productList.appendChild(item);
+  });
+}
+
 
        function onRegionChange(e) {
       const region = e.target.value;
