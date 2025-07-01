@@ -568,28 +568,33 @@ showCurrentTime();
       renderProducts(vendors, 'vendors');
     }
 
-    function renderSupplies(supplies, containerId) {
-  const container = document.getElementById(containerId);
+    function renderSupplies() {
+  const content = document.getElementById('content');
+  if (!content) return;
+
+  const userInfo = document.querySelector('.user-info')?.outerHTML || '';
+
+  content.innerHTML = `
+    ${userInfo}
+    <h2>Поставки</h2>
+    <div class="product-list" id="supplies-container"></div>
+  `;
+
+  const container = document.getElementById('supplies-container');
   if (!container) return;
-  container.innerHTML = '';
 
   supplies.forEach(supply => {
-    const item = document.createElement('div');
-    item.className = 'product-item';
-
-    const imgHtml = supply.image
-      ? `<img src="${supply.image}" alt="${supply.title}" />`
-      : '';
-
-    item.innerHTML = `
-      ${imgHtml}
-      <span>${supply.title || 'Без названия'}</span>
-      <span class="supplier">${supply.supplier || 'Поставщик не указан'}</span>
+    const supplyElement = document.createElement('div');
+    supplyElement.className = 'product-card';
+    supplyElement.innerHTML = `
+      <h3>${supply.name}</h3>
+      <p>Количество: ${supply.quantity}</p>
+      <p>Дата: ${supply.date}</p>
     `;
-
-    container.appendChild(item);
+    container.appendChild(supplyElement);
   });
 }
+
 
   function changeContent(page) {
     const content = document.getElementById('content');
