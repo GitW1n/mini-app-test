@@ -308,15 +308,21 @@ showCurrentTime();
   function renderProducts(products, section) {
   const productList = document.getElementById('product-list');
   productList.innerHTML = '';
+
   products.forEach(product => {
     const item = document.createElement('div');
     item.className = 'product-item';
-    const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
 
-    // Показываем наличие только если это local-market
-    const stockHtml = section === 'local-market' && product.stock !== undefined
-      ? `<span class="stock">Шт: ${product.stock}</span>`
+    // Картинка, если есть
+    const imgHtml = product.image
+      ? `<img src="${product.image}" alt="${product.title}" />`
       : '';
+
+    // Наличие в local-market
+    const stockHtml =
+      section === 'local-market' && product.stock !== undefined
+        ? `<span class="stock">Шт: ${product.stock}</span>`
+        : '';
 
     item.innerHTML = `
       ${imgHtml}
@@ -325,14 +331,16 @@ showCurrentTime();
       ${stockHtml}
     `;
 
-    // Обработка клика
+    // Обработчики клика
     if (section === 'home' && product.target) {
-      // Клик по карточке на главной — переход в другую секцию
+      // На главной — переходим в раздел
       item.addEventListener('click', () => changeContent(product.target));
     } else if (section === 'local-market') {
-      // Только в local-market — проверяем наличие на складе
-      item.addEventListener('click', () => {
+      // В локальном рынке — проверяем и списываем stock
+      item.addEventListener('click', async () => {
         if (product.stock > 0) {
+          // Можно здесь вызывать addToCart через API:
+          // await addToCart(product.id, 1);
           cart.push(product);
           product.stock--;
           renderProducts(products, section);
@@ -342,7 +350,7 @@ showCurrentTime();
         }
       });
     } else {
-      // В остальных секциях (не home, не local-market) — просто добавляем в корзину без проверки
+      // Во всех остальных разделах — просто добавляем в корзину без проверки
       item.addEventListener('click', () => {
         cart.push(product);
         alert(`${product.title} добавлен в корзину!`);
@@ -366,28 +374,38 @@ showCurrentTime();
       });
     }
   
-  function renderLocalMarket() {
-      const content = document.getElementById('content');
-      const userInfo = document.querySelector('.user-info') ? document.querySelector('.user-info').outerHTML : '';
-      content.innerHTML = `
-        ${userInfo}
-        <h2>Локальный рынок</h2>
-        <div class="selectors">
-          <label for="region">Регион:</label>
-          <select id="region" onchange="onRegionChange(event)"></select>
-          <label for="district">Район:</label>
-          <select id="district"></select>
-        </div>
-        <div class="product-list" id="product-list"></div>
-      `;
-      const regionSelect = document.getElementById('region');
-      Object.keys(regionDistricts).forEach(r => {
-        const opt = document.createElement('option'); opt.value = r; opt.textContent = r;
-        regionSelect.appendChild(opt);
-      });
-      onRegionChange({ target: regionSelect });
-      renderProducts(localMarketProducts, 'local-market');
-    }
+  async function renderLocalMarket() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <h2>Локальный рынок</h2>
+    <div class="selectors">
+      <select id="region"></select>
+      <select id="district"></select>
+    </div>
+    <div class="product-list" id="product-list"></div>
+  `;
+
+  // Настройка селектов (как было):
+  const regionSelect   = document.getElementById('region');
+  const districtSelect = document.getElementById('district');
+  Object.keys(regionData).forEach(r => regionSelect.add(new Option(r, r)));
+  regionSelect.onchange = async () => {
+    // при смене региона подгружаем районы:
+    const districts = regionData[regionSelect.value];
+    districtSelect.innerHTML = '';
+    districts.forEach(d => districtSelect.add(new Option(d, d)));
+    // а потом сразу подгружаем товары:
+    const prods = await fetchProducts(regionSelect.value, districtSelect.value);
+    renderProducts(prods, 'local-market');
+  };
+  districtSelect.onchange = async () => {
+    const prods = await fetchProducts(regionSelect.value, districtSelect.value);
+    renderProducts(prods, 'local-market');
+  };
+
+  // Инициализация
+  regionSelect.onchange();
+}
 
   function renderCart() {
     const content = document.getElementById('content');
