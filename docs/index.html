@@ -38,8 +38,6 @@
     </button>
 
     <script>
-      const API_BASE_URL = 'https://b4e7-46-166-162-166.ngrok-free.app';
-
       // Функция для перехода на главную страницу
       function goHome() {
         changeContent('home');  // Возвращаем пользователя на главную страницу
@@ -236,7 +234,23 @@ showCurrentTime();
     { title: '🔒Не выставлен🔒' }
   ];
 
-  
+  const localMarketProducts = [
+      { title: '🔒Lit Energy Фейхоа🔒', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-d/wc100/7647447937.jpg', stock:0 },
+      { title: 'Coca-Cola classic в стекле 0,33 л', price: '166₽', image: 'https://ir.ozone.ru/s3/multimedia-1-s/wc100/7459353640.jpg', stock:0 },
+      { title: 'Coca-Cola без сахара в стекле 0,33 л', price: '166₽', image: 'https://ir-3.ozone.ru/s3/multimedia-1-j/wc100/7653741607.jpg', stock:0 },
+      { title: 'Coca-Cola Вишня 0,33 л', price: '164₽', image: 'https://ir.ozone.ru/s3/multimedia-1-l/wc100/7469809941.jpg', stock:0 },
+      { title: 'Pepsi Cola 0,3л', price: '67₽', image: 'https://ir-3.ozone.ru/s3/multimedia-8/wc100/6853922432.jpg', stock:0 },
+      { title: '7up напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-n/wc100/6914260319.jpg', stock:0 },
+      { title: 'Sprite напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-9/wc100/6914260341.jpg', stock:0 },
+      { title: 'Fanta напиток 0,3л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-f/wc100/6914260311.jpg', stock:0 },
+      { title: 'Вода газ.Ессентуки №4 | 0,45л', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-q/wc100/7349617898.jpg', stock:0 },
+      { title: 'Чипсы картофельные Lays бекон 70 г', price: '90₽', image: 'https://ir.ozone.ru/s3/multimedia-1-p/wc100/7153875373.jpg', stock:0 },
+      { title: 'Вода негазированная Сенежская 0.5л', price: '35₽', image: 'https://ir.ozone.ru/s3/multimedia-1-5/wc100/7227681365.jpg', stock:1 },
+      { title: 'Вода негазированная Святой Источник 0,33 л', price: '35₽', image: 'https://ir.ozone.ru/s3/multimedia-1-5/wc100/7478758949.jpg', stock:1 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: 'https://ir-3.ozone.ru/s3/multimedia-8/wc100/6853922432.jpg', stock:0 }
+    ];
       // Регион и районы
   const regionDistricts = {
     'Москва': ["Арбат(ЦАО)",
@@ -308,21 +322,15 @@ showCurrentTime();
   function renderProducts(products, section) {
   const productList = document.getElementById('product-list');
   productList.innerHTML = '';
-
   products.forEach(product => {
     const item = document.createElement('div');
     item.className = 'product-item';
+    const imgHtml = product.image ? `<img src="${product.image}" alt="${product.title}" />` : '';
 
-    // Картинка, если есть
-    const imgHtml = product.image
-      ? `<img src="${product.image}" alt="${product.title}" />`
+    // Показываем наличие только если это local-market
+    const stockHtml = section === 'local-market' && product.stock !== undefined
+      ? `<span class="stock">Шт: ${product.stock}</span>`
       : '';
-
-    // Наличие в local-market
-    const stockHtml =
-      section === 'local-market' && product.stock !== undefined
-        ? `<span class="stock">Шт: ${product.stock}</span>`
-        : '';
 
     item.innerHTML = `
       ${imgHtml}
@@ -331,16 +339,14 @@ showCurrentTime();
       ${stockHtml}
     `;
 
-    // Обработчики клика
+    // Обработка клика
     if (section === 'home' && product.target) {
-      // На главной — переходим в раздел
+      // Клик по карточке на главной — переход в другую секцию
       item.addEventListener('click', () => changeContent(product.target));
     } else if (section === 'local-market') {
-      // В локальном рынке — проверяем и списываем stock
-      item.addEventListener('click', async () => {
+      // Только в local-market — проверяем наличие на складе
+      item.addEventListener('click', () => {
         if (product.stock > 0) {
-          // Можно здесь вызывать addToCart через API:
-          // await addToCart(product.id, 1);
           cart.push(product);
           product.stock--;
           renderProducts(products, section);
@@ -350,7 +356,7 @@ showCurrentTime();
         }
       });
     } else {
-      // Во всех остальных разделах — просто добавляем в корзину без проверки
+      // В остальных секциях (не home, не local-market) — просто добавляем в корзину без проверки
       item.addEventListener('click', () => {
         cart.push(product);
         alert(`${product.title} добавлен в корзину!`);
@@ -374,38 +380,28 @@ showCurrentTime();
       });
     }
   
-  async function renderLocalMarket() {
-  const content = document.getElementById('content');
-  content.innerHTML = `
-    <h2>Локальный рынок</h2>
-    <div class="selectors">
-      <select id="region"></select>
-      <select id="district"></select>
-    </div>
-    <div class="product-list" id="product-list"></div>
-  `;
-
-  // Настройка селектов (как было):
-  const regionSelect   = document.getElementById('region');
-  const districtSelect = document.getElementById('district');
-  Object.keys(regionDistricts).forEach(r => regionSelect.add(new Option(r, r)));
-  regionSelect.onchange = async () => {
-    // при смене региона подгружаем районы:
-    const districts = regionDistricts[regionSelect.value];
-    districtSelect.innerHTML = '';
-    districts.forEach(d => districtSelect.add(new Option(d, d)));
-    // а потом сразу подгружаем товары:
-    const prods = await fetchProducts(regionSelect.value, districtSelect.value);
-    renderProducts(prods, 'local-market');
-  };
-  districtSelect.onchange = async () => {
-    const prods = await fetchProducts(regionSelect.value, districtSelect.value);
-    renderProducts(prods, 'local-market');
-  };
-
-  // Инициализация
-  regionSelect.onchange();
-}
+  function renderLocalMarket() {
+      const content = document.getElementById('content');
+      const userInfo = document.querySelector('.user-info') ? document.querySelector('.user-info').outerHTML : '';
+      content.innerHTML = `
+        ${userInfo}
+        <h2>Локальный рынок</h2>
+        <div class="selectors">
+          <label for="region">Регион:</label>
+          <select id="region" onchange="onRegionChange(event)"></select>
+          <label for="district">Район:</label>
+          <select id="district"></select>
+        </div>
+        <div class="product-list" id="product-list"></div>
+      `;
+      const regionSelect = document.getElementById('region');
+      Object.keys(regionDistricts).forEach(r => {
+        const opt = document.createElement('option'); opt.value = r; opt.textContent = r;
+        regionSelect.appendChild(opt);
+      });
+      onRegionChange({ target: regionSelect });
+      renderProducts(localMarketProducts, 'local-market');
+    }
 
   function renderCart() {
     const content = document.getElementById('content');
@@ -705,43 +701,19 @@ showCurrentTime();
       }, 5000);
     }
 
-    async function fetchProducts(region, district) {
-  const params = new URLSearchParams();
-  if (region) params.append('region', region);
-  if (district) params.append('district', district);
-
-  const response = await fetch(`${API_BASE_URL}/api/products?${params.toString()}`, {
-    headers: {
-      'ngrok-skip-browser-warning': '1'
+    async function fetchProducts() {
+      const response = await fetch('http://localhost:3000/api/products');
+      const data = await response.json();
+      return data;
     }
-  });
 
-  if (!response.ok) {
-    throw new Error(`Ошибка загрузки продуктов: ${response.status}`);
-  }
-
-  return await response.json();
-}
-
-async function addToCart(productId, quantity = 1) {
-  const response = await fetch(`${API_BASE_URL}/api/cart`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': '1'
-    },
-    body: JSON.stringify({ productId, quantity })
-  });
-
-  const result = await response.json();
-
-  if (!result.success) {
-    alert(`Не удалось добавить в корзину: ${result.message}`);
-  }
-
-  return result;
-}
-
+    async function addToCart(product) {
+      await fetch('http://localhost:3000/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
+    }
   </script>
 
   <script>
@@ -789,7 +761,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Функция для обновления баланса через API
-/*
 async function updateBalanceAPI(userId, newBalance) {
   const response = await fetch('http://127.0.0.1:8000/update_balance', {
     method: 'POST',
@@ -808,7 +779,7 @@ async function updateBalanceAPI(userId, newBalance) {
   const data = await response.json();
   return data;  // Ответ от сервера, например, с новым балансом
 }
-*/
+
 </script>
 
 
