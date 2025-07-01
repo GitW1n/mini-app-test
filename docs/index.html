@@ -38,6 +38,8 @@
     </button>
 
     <script>
+      const API_BASE_URL = 'https://b4e7-46-166-162-166.ngrok-free.app';
+
       // Функция для перехода на главную страницу
       function goHome() {
         changeContent('home');  // Возвращаем пользователя на главную страницу
@@ -702,18 +704,18 @@ showCurrentTime();
     }
 
     async function fetchProducts() {
-      const response = await fetch('http://localhost:3000/api/products');
-      const data = await response.json();
-      return data;
-    }
+  const response = await fetch('https://b4e7-46-166-162-166.ngrok-free.app/api/products');
+  const data = await response.json();
+  return data;
+}
 
     async function addToCart(product) {
-      await fetch('http://localhost:3000/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
-      });
-    }
+  await fetch(`${API_BASE_URL}/api/cart`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(product)
+  });
+}
   </script>
 
   <script>
