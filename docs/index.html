@@ -707,37 +707,41 @@ showCurrentTime();
 
     async function fetchProducts(region, district) {
   const params = new URLSearchParams();
-  if (region)   params.append('region', region);
+  if (region) params.append('region', region);
   if (district) params.append('district', district);
 
- const response = await fetch(`${API_BASE_URL}/api/products?${params.toString()}`, {
-  headers: {
-    'ngrok-skip-browser-warning': '1'
-  }
-});
+  const response = await fetch(`${API_BASE_URL}/api/products?${params.toString()}`, {
+    headers: {
+      'ngrok-skip-browser-warning': '1'
+    }
+  });
 
-if (!response.ok) {
-  throw new Error(`Ошибка загрузки продуктов: ${response.status}`);
+  if (!response.ok) {
+    throw new Error(`Ошибка загрузки продуктов: ${response.status}`);
+  }
+
+  return await response.json();
 }
 
-return await response.json();
-
-    async function addToCart(productId, quantity = 1) {
+async function addToCart(productId, quantity = 1) {
   const response = await fetch(`${API_BASE_URL}/api/cart`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': '1'
-  },
-  body: JSON.stringify({ productId, quantity })
-});
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': '1'
+    },
+    body: JSON.stringify({ productId, quantity })
+  });
 
   const result = await response.json();
+
   if (!result.success) {
     alert(`Не удалось добавить в корзину: ${result.message}`);
   }
+
   return result;
 }
+
   </script>
 
   <script>
