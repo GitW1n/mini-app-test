@@ -585,15 +585,16 @@ showCurrentTime();
   if (!container) return;
 
   supplies.forEach(supply => {
-    const supplyElement = document.createElement('div');
-    supplyElement.className = 'product-card';
-    supplyElement.innerHTML = `
-      <h3>${supply.name}</h3>
-      <p>Количество: ${supply.quantity}</p>
-      <p>Дата: ${supply.date}</p>
-    `;
-    container.appendChild(supplyElement);
-  });
+  const div = document.createElement('div');
+  div.className = 'product-card';
+  div.innerHTML = `
+    <h3>${supply.title}</h3>
+    <img src="${supply.image}" alt="${supply.title}" style="width:100px; height:auto;" />
+    <p>Поставщик: ${supply.supplier || 'Не указан'}</p>
+  `;
+  container.appendChild(div);
+});
+
 }
 
 
