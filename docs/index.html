@@ -237,6 +237,12 @@ showCurrentTime();
 
   const localMarketProducts = [
       { title: '🔒Lit Energy Фейхоа🔒', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-d/wc100/7647447937.jpg', stock:0 },
+      { title: '🔒Adrenaline Rush🔒, 250 мл', price: '84₽', image: 'https://ir.ozone.ru/s3/multimedia-1-j/wc100/7541910091.jpg', stock:0 },
+      { title: '🔒Drive Me Berry Kiсk Ягода🔒 0,449л', price: '109₽', image: 'https://ir.ozone.ru/s3/multimedia-1-m/wc100/6986520982.jpg', stock:0 },
+      { title: '🔒Drive Me Berry Kiсk Ориг.🔒 0,449л', price: '90₽', image: 'https://ir.ozone.ru/s3/multimedia-1-u/wc100/7666377690.jpg', stock:0 },
+      { title: 'Чипсы Lit Energy со вкусом сметаны и зелени, 120 г', price: '164₽', image: 'https://ir.ozone.ru/s3/multimedia-1-r/wc100/7384852323.jpg', stock:0 },
+      { title: ' LIT ENERGY Original, 450 мл', price: '105₽', image: 'https://ir.ozone.ru/s3/multimedia-1-b/wc100/7204724999.jpg', stock:0 },
+      { title: 'Шоколадный батончик Snickers Super 80 г', price: '94.99₽', image: 'https://ir.ozone.ru/s3/multimedia-1-g/wc100/7411016824.jpg', stock:0 },
       { title: 'Coca-Cola classic в стекле 0,33 л', price: '166₽', image: 'https://ir.ozone.ru/s3/multimedia-1-s/wc100/7459353640.jpg', stock:0 },
       { title: 'Coca-Cola без сахара в стекле 0,33 л', price: '166₽', image: 'https://ir-3.ozone.ru/s3/multimedia-1-j/wc100/7653741607.jpg', stock:0 },
       { title: 'Coca-Cola Вишня 0,33 л', price: '164₽', image: 'https://ir.ozone.ru/s3/multimedia-1-l/wc100/7469809941.jpg', stock:0 },
@@ -248,13 +254,26 @@ showCurrentTime();
       { title: 'Чипсы картофельные Lays бекон 70 г', price: '90₽', image: 'https://ir.ozone.ru/s3/multimedia-1-p/wc100/7153875373.jpg', stock:0 },
       { title: 'Вода негазированная Сенежская 0.5л', price: '35₽', image: 'https://ir.ozone.ru/s3/multimedia-1-5/wc100/7227681365.jpg', stock:1 },
       { title: 'Вода негазированная Святой Источник 0,33 л', price: '35₽', image: 'https://ir.ozone.ru/s3/multimedia-1-5/wc100/7478758949.jpg', stock:1 },
-      { title: '🔒Adrenaline Rush🔒, 250 мл', price: '84₽', image: 'https://ir.ozone.ru/s3/multimedia-1-j/wc100/7541910091.jpg', stock:0 },
-      { title: '🔒Drive Me Berry Kiсk Ягода🔒 0,449л', price: '109₽', image: 'https://ir.ozone.ru/s3/multimedia-1-m/wc100/6986520982.jpg', stock:0 },
-      { title: '🔒Drive Me Berry Kiсk Ориг.🔒 0,449л', price: '90₽', image: 'https://ir.ozone.ru/s3/multimedia-1-u/wc100/7666377690.jpg', stock:0 },
-      { title: 'Чипсы Lit Energy со вкусом сметаны и зелени, 120 г', price: '164₽', image: 'https://ir.ozone.ru/s3/multimedia-1-r/wc100/7384852323.jpg', stock:0 },
-      { title: ' LIT ENERGY Original, 450 мл', price: '105₽', image: 'https://ir.ozone.ru/s3/multimedia-1-b/wc100/7204724999.jpg', stock:0 },
       { title: 'Шоколад Feastables Сookies&Creme ', price: '999.99₽', image: 'https://ir.ozone.ru/s3/multimedia-1-7/wc100/7313148331.jpg', stock:0 },
-      { title: 'Чипсы Lava Lava (Лава Лава) краб', price: '1100₽', image: 'https://ir.ozone.ru/s3/multimedia-d/wc100/6393327301.jpg', stock:0 },
+      { title: 'Чипсы Lava Lava (Лава Лава) краб', price: '1099.99₽', image: 'https://ir.ozone.ru/s3/multimedia-d/wc100/6393327301.jpg', stock:0 },
+      { title: 'напиток Dr.Pepper Original, 330 мл', price: '129.99₽', image: 'https://ir.ozone.ru/s3/multimedia-1-n/wc100/7097956079.jpg', stock:0 },
+      { title: 'Sanpellegrino Красный Апельсин, 330 мл', price: '169.99₽', image: 'https://ir.ozone.ru/s3/multimedia-1-3/wc100/7469811111.jpg', stock:0 },
+      { title: 'Sanpellegrino Гранат и Апельсин, 330 мл', price: '173.99₽', image: 'https://ir.ozone.ru/s3/multimedia-1-m/wc100/7077026818.jpg', stock:0 },
+      { title: 'Квас Очаковский, 0,45 л', price: '80₽', image: 'https://ir.ozone.ru/s3/multimedia-1-v/wc100/7459352779.jpg', stock:0 },
+      { title: 'Snickers Белый шоколадный батончик 81 г', price: '94.99₽', image: 'https://ir.ozone.ru/s3/multimedia-1-f/wc100/7663596891.jpg', stock:0 },
+      { title: 'Пломбир в вафельном стаканчике 100 г', price: '--₽', image: 'https://ir.ozone.ru/s3/multimedia-1-m/wc100/7058186218.jpg', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
+      { title: '---', price: '--₽', image: '', stock:0 },
       { title: '---', price: '--₽', image: '', stock:0 },
       { title: '---', price: '--₽', image: 'https://ir-3.ozone.ru/s3/multimedia-8/wc100/6853922432.jpg', stock:0 }
     ];
@@ -430,6 +449,7 @@ showCurrentTime();
       content.innerHTML = `
         ${userInfo}
         <h2>Локальный рынок</h2>
+        <h2>Время до поставки новых товаров: 3 дня ост. Последняя поставка сегодня - 11:00 MSK</h3>
         <div class="selectors">
           <label for="region">Регион:</label>
           <select id="region" onchange="onRegionChange(event)"></select>
