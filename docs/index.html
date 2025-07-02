@@ -520,47 +520,93 @@ showCurrentTime();
 }
 
 
-
-
-  function proceedToCheckout() {
-    // Страница оформления заказа
-    if (cart.length > 0) {
-      const orderId = Math.floor(Math.random() * 1000000);  // Уникальный ID заказа
-      const amount = cart.reduce((sum, product) => sum + parseFloat(product.price), 0) * 100;  // Общая сумма в копейках
-      const description = "Оплата заказа №" + orderId;
-
-      // Данные для QR-кода в формате СБП
-      const qrData = `ST00012|Name=ИП Иванов Иван|PersonalAcc=40802810000000000001|BankName=Тинькофф|BIC=044525974|PayeeINN=1234567890|Purpose=Перевод|Sum=${amount}`;
-
-      // Генерация QR-кода через внешний API
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
-
-      // Отображение информации о заказе
-      const content = document.getElementById('content');
-      content.innerHTML = `
-        <h2>Оплата заказа №${orderId}</h2>
-        <p>Сумма к оплате: ${(amount / 100).toFixed(2)} ₽</p>
-        <p>Отсканируйте QR-код в приложении банка для оплаты или переведите средства на счёт через СБП(Тинькофф):</p> <a href="#" onclick="changeContent('terms')"> .</a>
-      `;
-      
-      // Показываем блок контента
-      content.style.display = 'block';
-
-      // Отображение QR-кода в отдельном div
-      const qrContent = document.getElementById('qr-content');
-      qrContent.innerHTML = `    
-        <img src="${qrUrl}" alt="QR для оплаты по СБП" style="max-width: 300px; border: 2px solid #000; padding: 10px; border-radius: 8px;" />
-      `;
-      
-      // Показываем блок с QR-кодом
-      qrContent.style.display = 'block';
-
-      // Добавление кнопки "Отменить оформление" непосредственно на страницу оформления заказа
-      addBackButton(content);  // Используем функцию для добавления кнопки
-    } else {
-      alert('Ваша корзина пуста!');
-    }
+function proceedToCheckout() {
+  if (cart.length === 0) {
+    alert('Ваша корзина пуста!');
+    return;
   }
+
+  const orderId = Math.floor(Math.random() * 1000000);
+  const totalAmount = cart.reduce((sum, p) => sum + parseFloat(p.price), 0).toFixed(2);
+  const content = document.getElementById('content');
+  const qrContent = document.getElementById('qr-content');
+
+  // Сбрасываем предыдущий контент
+  qrContent.style.display = 'none';
+  qrContent.innerHTML = '';
+
+  // Формируем HTML формы выбора оплаты
+  content.innerHTML = `
+    <h2>Оформление заказа №${orderId}</h2>
+    <p>Сумма к оплате: ${totalAmount} ₽</p>
+    <form id="payment-form">
+      <label>
+        <input type="radio" name="method" value="SBP" checked>
+        Оплата через СБП (Тинькофф)
+      </label><br>
+      <label>
+        <input type="radio" name="method" value="CARD">
+        Оплата картой
+      </label><br><br>
+      <button type="submit">Оформить</button>
+    </form>
+  `;
+  content.style.display = 'block';
+
+  // Привязываем обработчик отправки формы
+  document.getElementById('payment-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const method = document.querySelector('input[name="method"]:checked').value;
+    generatePaymentQRCode(orderId, totalAmount, method);
+  });
+}
+
+// Функция генерации и отображения QR-кода
+function generatePaymentQRCode(orderId, amount, method) {
+  const content = document.getElementById('content');
+  const qrContent = document.getElementById('qr-content');
+
+  // Собираем данные для QR в зависимости от метода
+  let qrData;
+  if (method === 'SBP') {
+    const sumCents = Math.round(parseFloat(amount) * 100);
+    qrData = `ST00012|Name=ИП Иванов Иван|PersonalAcc=40802810000000000001|BankName=Тинькофф|BIC=044525974|PayeeINN=1234567890|Purpose=Оплата заказа №${orderId}|Sum=${sumCents}`;
+  } else if (method === 'CARD') {
+    // Пример данных для оплаты картой (Tokenize, Stripe и т.д.)
+    qrData = `CARDPAYMENT|Order=${orderId}|Sum=${amount}`;
+  }
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+
+  // Показываем QR-код и информацию об оплате
+  content.innerHTML = `
+    <h2>Оплата заказа №${orderId}</h2>
+    <p>Метод оплаты: ${method === 'SBP' ? 'СБП (Тинькофф)' : 'Картой'}</p>
+    <p>Сумма: ${amount} ₽</p>
+  `;
+
+  qrContent.innerHTML = `
+    <img src="${qrUrl}" alt="QR для оплаты" style="max-width:300px; border:2px solid #000; padding:10px; border-radius:8px;" />
+  `;
+  qrContent.style.display = 'block';
+
+  // Кнопка возврата
+  addBackButton(content);
+}
+
+// Функция добавления кнопки возврата назад
+function addBackButton(container) {
+  const btn = document.createElement('button');
+  btn.textContent = 'Отменить';
+  btn.addEventListener('click', () => {
+    changeContent('cart');
+  });
+  container.appendChild(document.createElement('br'));
+  container.appendChild(btn);
+}
+
+
+  
 
   // Функция для добавления кнопки возврата на главную в раздел оформления заказа
 
