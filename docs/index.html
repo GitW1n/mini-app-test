@@ -497,29 +497,13 @@ showCurrentTime();
   }
 
 
-  function addBackButton(content) {
-  console.log("addBackButton вызывается");
-  
-  const backButton = document.createElement('button');
-  backButton.textContent = 'Отменить оформление';
+  /*
+  Обновлённая функция оформления заказа:
+  1) Отображает форму выбора способа оплаты и подтверждения суммы
+  2) По нажатию кнопки "Оформить" генерирует и показывает QR-код
+*/
 
-  // Стили для кнопки
-  backButton.style.padding = '10px 20px';
-  backButton.style.fontSize = '16px';
-  backButton.style.backgroundColor = '#e74c3c'; // Красный цвет для отмены
-  backButton.style.color = 'white';
-  backButton.style.border = 'none';
-  backButton.style.borderRadius = '5px';
-  backButton.style.cursor = 'pointer';
-
-  backButton.onclick = function () {
-    changeContent('home');  // Вернуть на главную страницу
-  };
-
-  content.appendChild(backButton);  // Добавляем кнопку в конец контента
-}
-
-
+// Главная функция, вызываемая для начала оформления
 function proceedToCheckout() {
   if (cart.length === 0) {
     alert('Ваша корзина пуста!');
@@ -529,37 +513,46 @@ function proceedToCheckout() {
   const orderId = Math.floor(Math.random() * 1000000);
   const totalAmount = cart.reduce((sum, p) => sum + parseFloat(p.price), 0).toFixed(2);
   const content = document.getElementById('content');
-  const qrContent = document.getElementById('qr-content');
 
-  // Сбрасываем предыдущий контент
-  qrContent.style.display = 'none';
-  qrContent.innerHTML = '';
-
-  // Формируем HTML формы выбора оплаты
   content.innerHTML = `
     <h2>Оформление заказа №${orderId}</h2>
     <p>Сумма к оплате: ${totalAmount} ₽</p>
     <form id="payment-form">
-      <label>
-        <input type="radio" name="method" value="SBP" checked>
-        Оплата через СБП (Тинькофф)
-      </label><br>
-      <label>
-        <input type="radio" name="method" value="CARD">
-        Оплата картой
-      </label><br><br>
+      <label><input type="radio" name="method" value="SBP" checked>Оплата через СБП</label><br>
+      <label><input type="radio" name="method" value="CARD">Оплата картой</label><br><br>
       <button type="submit">Оформить</button>
     </form>
   `;
   content.style.display = 'block';
 
-  // Привязываем обработчик отправки формы
-  document.getElementById('payment-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+  document.getElementById('payment-form').addEventListener('submit', function(e) {
+    e.preventDefault();
     const method = document.querySelector('input[name="method"]:checked').value;
-    generatePaymentQRCode(orderId, totalAmount, method);
+    confirmOrder(orderId, totalAmount, method);
   });
 }
+
+function confirmOrder(orderId, amount, method) {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <h2>Заказ №${orderId} оформлен</h2>
+    <p>Метод оплаты: ${method === 'SBP' ? 'СБП' : 'Картой'}</p>
+    <p>Сумма: ${amount} ₽</p>
+    <p>Инструкция по оплате выслана на вашу почту.</p>
+  `;
+
+  addBackButton(content);
+}
+
+function addBackButton(container) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Вернуться в корзину';
+  btn.style.marginTop = '15px';
+  btn.addEventListener('click', () => changeContent('cart'));
+  container.appendChild(btn);
+}
+
 
 // Функция генерации и отображения QR-кода
 function generatePaymentQRCode(orderId, amount, method) {
@@ -597,13 +590,20 @@ function generatePaymentQRCode(orderId, amount, method) {
 // Функция добавления кнопки возврата назад
 function addBackButton(container) {
   const btn = document.createElement('button');
+  btn.type = 'button';  // предотвращаем поведение submit
   btn.textContent = 'Отменить';
   btn.addEventListener('click', () => {
-    changeContent('cart');
+    if (typeof changeContent === 'function') {
+      changeContent('cart');
+    } else {
+      window.location.reload();  // альтернативный возврат
+    }
   });
   container.appendChild(document.createElement('br'));
   container.appendChild(btn);
 }
+
+
 
 
   
